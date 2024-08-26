@@ -16,7 +16,7 @@ switch($paction)
         
         
         if ($db->insertProdottoCarrello($idProdotto)) {
-        echo 1;
+            echo 1;
         } else {
             echo 0;
         }
@@ -34,13 +34,38 @@ switch($paction)
     
     
 
-    case "RecuperoProdotti":
-
-       
+    case "eliminaProdotto":
+        $id_prodottoCarrello=get_param("_id_prodottiCarrello");
+        if ($db->eliminaProdotto($id_prodottoCarrello)) {
+            echo 1; 
+        } else {
+            echo 0; 
+        }
        
     break;  
 
  
+    case "incrementa":
+        $id_prodottoCarrello=get_param("_id_prodottiCarrello");
+        if ($db->incrementa($id_prodottoCarrello)) {
+            echo 1; 
+        } else {
+            echo 0; 
+        }
+       
+    break;  
+
+    case "decrementa":
+        $id_prodottoCarrello=get_param("_id_prodottiCarrello");
+        if ($db->decrementa($id_prodottoCarrello)) {
+            echo 1; 
+        } else {
+            echo 0; 
+        }
+       
+    break;  
+
+
     
 }   
 ?>

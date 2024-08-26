@@ -43,9 +43,8 @@ class Database {
     }
 
     public function recuperaProdottiCarrello() {
-        $id_carrello = $this->controlloCarrello(); // Recupera l'ID del carrello corrente
+        $id_carrello = $this->controlloCarrello(); 
 
-        // Query per recuperare i prodotti nel carrello
         $sql = "SELECT * from prodotticarrello
                         INNER join carrello on prodotticarrello.id_carrello = carrello.id_carrello
                         INNER JOIN prodotto ON prodotticarrello.id_prodotto=prodotto.id 
@@ -54,7 +53,6 @@ class Database {
         $result = $this->conn->query($sql);
 
         if ($result->num_rows > 0) {
-            // Converte i risultati in un array associativo
             $prodotti = [];
             while($row = $result->fetch_assoc()) {
                 $prodotti[] = $row;
@@ -62,6 +60,47 @@ class Database {
             return $prodotti;
         } else {
             return "false";
+        }
+    }
+
+
+    public function eliminaProdotto($id) {
+        $id_carrello = $this->controlloCarrello(); 
+
+        $sql = "DELETE FROM prodotticarrello WHERE id_carrello=$id_carrello AND id_prodottiCarrello=$id";
+
+        if ($this->conn->query($sql) === TRUE) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function incrementa($id) {
+        $id_carrello = $this->controlloCarrello(); 
+        
+        $sql = "UPDATE prodotticarrello 
+                SET numero_prodotti = numero_prodotti + 1 
+                WHERE id_carrello = '$id_carrello' AND id_prodottiCarrello = '$id'";
+        
+        if ($this->conn->query($sql) === TRUE) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function decrementa($id) {
+        $id_carrello = $this->controlloCarrello();
+        
+        $sql = "UPDATE prodotticarrello 
+                SET numero_prodotti = numero_prodotti - 1 
+                WHERE id_carrello = '$id_carrello' AND id_prodottiCarrello = '$id'";
+        
+        if ($this->conn->query($sql) === TRUE) {
+            return true;
+        } else {
+            return false;
         }
     }
 
@@ -82,9 +121,6 @@ class Database {
                 return false;
             }
         }
-        
-        
-    
         return $id_carrello;
     }
 }

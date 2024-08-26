@@ -77,6 +77,7 @@ echo "IL TUO ID = " . $id_utente;
                     <th>Prodotto</th>
                     <th>Prezzo</th>
                     <th>Quantità</th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
@@ -86,7 +87,27 @@ echo "IL TUO ID = " . $id_utente;
 
         <button class="btn btn-primary mb-0">aaa</button>
     </div>
-
+    <div class="col-lg-3">
+                  <div class="input-group">
+                      <span class="input-group-btn">
+                          <button type="button" class="quantity-left-minus btn  "  data-type="minus" data-field="">
+                            <svg class="bi currency-euro .text-primary" role="img" aria-label="Tools">
+                              <use xlink:href="icon/bootstrap-icons.svg#dash-circle"/> 
+                            </svg>                                       
+                          </button>
+                      </span>
+                      <div class="col-2">
+                        <input type="text" id="quantity" name="quantity" class="form-control "  value="1" min="1" max="100"  >
+                      </div>
+                      <span class="input-group-btn">
+                          <button type="button" class="quantity-right-plus btn  " data-type="plus" data-field="">
+                          <svg class="bi currency-euro .text-primary" role="img" aria-label="Tools">
+                            <use xlink:href="icon/bootstrap-icons.svg#plus-circle"/> 
+                          </svg>
+                          </button>
+                      </span>
+                  </div>
+              </div>
     <script src="node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
@@ -94,10 +115,27 @@ echo "IL TUO ID = " . $id_utente;
 
 
 <script>
-$(document).ready(function() {
-    // Qui puoi chiamare il tuo metodo
-    riempiCarrello(); // Ad esempio, chiama la funzione per riempire il carrello
-});
+    $(document).ready(function() {
+        // Qui puoi chiamare il tuo metodo
+        riempiCarrello(); // Ad esempio, chiama la funzione per riempire il carrello
+    });
+
+
+
+
+    // Mostra il carrello
+    $('#btnCarrello').on('click', function () {
+            $('#carrello').toggleClass('show');
+            riempiCarrello();
+    });
+
+
+    // Nasconde il carrello
+    $('.close-cart').on('click', function () {
+        $('#carrello').toggleClass('show');
+
+    });
+
 
     // Funzione per aggiungere prodotto (può essere connessa con il tuo backend tramite AJAX)
     function aggiungiProdotto(id_prodotto) {
@@ -121,25 +159,63 @@ $(document).ready(function() {
         });
     }
 
+
+    
+    function eliminaprodotto(id_prodottiCarrello){
+        $.ajax({
+            type: "POST",
+            url: 'action.php?_action=eliminaProdotto&_id_prodottiCarrello=' + encodeURIComponent(id_prodottiCarrello),
+            dataType: 'json',
+            success: function (result) {
+
+                if (result=1) {
+                    console.log("okokok")
+                    riempiCarrello()
+                } else {
+                    alert("errore")
+                }
+            },
+            error: function () {
+                console.log("Errore nel recupero dei prodotti.");
+            }
+        });
+    }
+
     function riempiCarrello() {
     $.ajax({
         type: "POST",
         url: 'action.php?_action=FillCarrello',
         dataType: 'json',
         success: function (prodotti) {
-
-            if (prodotti.length > 0) {
+            console.log("p"+JSON.stringify(prodotti));
+            if (prodotti && prodotti !== false && Array.isArray(prodotti) && prodotti.length > 0) {
                 let tableHTML = "";
                 prodotti.forEach(function(prodotto) {
+                    console.log(prodotto);
                     tableHTML += "<tr>";
                     tableHTML += "<td>" + prodotto.titolo + "</td>";
                     tableHTML += "<td>" + prodotto.prezzo + "€</td>";
-                    tableHTML += "<td>1</td>"; // Qui puoi aggiungere la logica per gestire la quantità
+                    tableHTML += "<td class='d-flex justify-content-between align-items-center'>";
+                    tableHTML += "<div class='col-4 p-0 '>";
+                    tableHTML += "<button class='btn btn-outline-secondary btn-sm rounded-circle' type='button' onclick='diminuisciQuantita(" + prodotto.id_prodottiCarrello + ")'>";
+                    tableHTML += "<svg width='16' height='16' fill='currentColor'><use xlink:href='icon/bootstrap-icons.svg#dash-circle'/></svg>";
+                    tableHTML += "</button>";
+                    tableHTML += "</div>";
+                    tableHTML += "<div class='col-4 p-0'>";
+                    tableHTML += "<input type='text' class='form-control form-control-sm text-center' id='quantity_" + prodotto.id_prodottiCarrello + "' value='"+prodotto.numero_prodotti+"' min='1' max='100'>";
+                    tableHTML += "</div>";
+                    tableHTML += "<div class='col-4 p-0'>";
+                    tableHTML += "<button class='btn btn-outline-secondary btn-sm rounded-circle' type='button' onclick='incrementaQuantita(" + prodotto.id_prodottiCarrello + ")'>";
+                    tableHTML += "<svg width='16' height='16' fill='currentColor'><use xlink:href='icon/bootstrap-icons.svg#plus-circle'/></svg>";
+                    tableHTML += "</button>";
+                    tableHTML += "</div>";
+                    tableHTML += "</td>";
+                    tableHTML += "<td><button class='btn btn-danger btn-sm delete-btn' data-id='" + prodotto.id_prodottiCarrello + "' onclick='eliminaprodotto(" + prodotto.id_prodottiCarrello +")'>Delete</button></td>";
                     tableHTML += "</tr>";
                 });
                 $('#cartTable tbody').html(tableHTML); // Inserisce i prodotti nella tabella
             } else {
-                $('#cartTable tbody').html("<tr><td colspan='3'>Il carrello è vuoto.</td></tr>");
+                $('#cartTable tbody').html("<tr><td colspan='4'>Il carrello è vuoto.</td></tr>");
             }
         },
         error: function () {
@@ -148,20 +224,46 @@ $(document).ready(function() {
     });
 }
 
+    
+    function incrementaQuantita(id_prodottiCarrello) {
+        $.ajax({
+            type: "POST",
+            url: 'action.php?_action=incrementa',
+            dataType: 'json',
+            success: function (result) {
+                console.log("p"+JSON.stringify(result));
+                if (result=1) {
+                    riempiCarrello()
+                } else {
+                    console.log("err")
+                }
+            },
+            error: function () {
+                console.log("Errore nel recupero dei prodotti.");
+            }
+        });
+    }
+
+    function diminuisciQuantita(id_prodottiCarrello) {
+        $.ajax({
+            type: "POST",
+            url: 'action.php?_action=decrementa',
+            dataType: 'json',
+            success: function (result) {
+                console.log(result)
+                if (result=1) {
+                    riempiCarrello()
+                } else {
+                    console.log("err")
+                }
+            },
+            error: function () {
+                console.log("Errore nel recupero dei prodotti.");
+            }
+        });
+    }
 
    
 
-    // Mostra il carrello
-    $('#btnCarrello').on('click', function () {
-         $('#carrello').toggleClass('show');
-         riempiCarrello();
-    });
-
-
-    // Nasconde il carrello
-    $('.close-cart').on('click', function () {
-        $('#carrello').toggleClass('show');
-
-    });
 
 </script>
