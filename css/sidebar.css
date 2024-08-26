@@ -1,0 +1,28 @@
+
+/* Stile del carrello che scorre da destra */
+#carrello {
+    position: fixed;
+    right: -400px; /* Inizia fuori dalla schermata */
+    top: 0;
+    width: 400px;
+    height: 100%;
+    background-color: white;
+    box-shadow: -2px 0 5px rgba(0, 0, 0, 0.5);
+    transition: right 0.3s ease; /* Transizione animata */
+    z-index: 9999;
+}
+
+/* Carrello visibile */
+#carrello.show {
+    right: 0; /* Porta il carrello a destra della schermata */
+}
+
+
+/* Stile del pulsante per aprire il carrello */
+#btnCarrello {
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    z-index: 10000;
+}
+
