@@ -31,6 +31,27 @@ function get_db_array($name)
   return $array;
 }
 
+
+
+
+function db_fill_array($query)
+{
+    $db = new Database();
+    $array = []; // Assicurati che l'array sia inizializzato come array vuoto.
+    $ordini = $db->conn->query($query);
+
+    if ($ordini) {
+        while ($row = $ordini->fetch_assoc()) {
+            $array[] = $row; // Aggiunge ogni riga come array associativo.
+        }
+    } else {
+        // Gestione errore query
+        error_log("Errore nella query: " . $db->conn->error);
+    }
+
+    return $array;
+}
+
 function get_db_value($k)
 {
   $db = new Database();

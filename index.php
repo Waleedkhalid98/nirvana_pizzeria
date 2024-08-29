@@ -85,7 +85,7 @@ echo "IL TUO ID = " . $id_utente;
             </tbody>
         </table>
 
-        <button class="btn btn-primary mb-0">aaa</button>
+        <button class="btn btn-primary mb-0" onclick="ordina()">aaa</button>
     </div>
     <div class="col-lg-3">
                   <div class="input-group">
@@ -169,7 +169,7 @@ echo "IL TUO ID = " . $id_utente;
             success: function (result) {
 
                 if (result=1) {
-                    console.log("okokok")
+                    // console.log("okokok")
                     riempiCarrello()
                 } else {
                     alert("errore")
@@ -187,11 +187,11 @@ echo "IL TUO ID = " . $id_utente;
         url: 'action.php?_action=FillCarrello',
         dataType: 'json',
         success: function (prodotti) {
-            console.log("p"+JSON.stringify(prodotti));
+            // console.log("p"+JSON.stringify(prodotti));
             if (prodotti && prodotti !== false && Array.isArray(prodotti) && prodotti.length > 0) {
                 let tableHTML = "";
                 prodotti.forEach(function(prodotto) {
-                    console.log(prodotto);
+                    // console.log(prodotto);
                     tableHTML += "<tr>";
                     tableHTML += "<td>" + prodotto.titolo + "</td>";
                     tableHTML += "<td>" + prodotto.prezzo + "€</td>";
@@ -228,10 +228,9 @@ echo "IL TUO ID = " . $id_utente;
     function incrementaQuantita(id_prodottiCarrello) {
         $.ajax({
             type: "POST",
-            url: 'action.php?_action=incrementa',
+            url: 'action.php?_action=incrementa&_id_prodottiCarrello=' + encodeURIComponent(id_prodottiCarrello),
             dataType: 'json',
             success: function (result) {
-                console.log("p"+JSON.stringify(result));
                 if (result=1) {
                     riempiCarrello()
                 } else {
@@ -239,7 +238,7 @@ echo "IL TUO ID = " . $id_utente;
                 }
             },
             error: function () {
-                console.log("Errore nel recupero dei prodotti.");
+                console.log("Errore nell'incremento.");
             }
         });
     }
@@ -247,7 +246,7 @@ echo "IL TUO ID = " . $id_utente;
     function diminuisciQuantita(id_prodottiCarrello) {
         $.ajax({
             type: "POST",
-            url: 'action.php?_action=decrementa',
+            url: 'action.php?_action=decrementa&_id_prodottiCarrello=' + encodeURIComponent(id_prodottiCarrello),
             dataType: 'json',
             success: function (result) {
                 console.log(result)
@@ -264,6 +263,26 @@ echo "IL TUO ID = " . $id_utente;
     }
 
    
+    function ordina(){
+        $.ajax({
+            type: "POST",
+            url: 'action.php?_action=ordina',
+            dataType: 'json',
+            success: function (result) {
+                console.log(result)
+                if (result=1) {
+                    riempiCarrello()
+                } else {
+                    console.log("err")
+                }
+            },
+            error: function () {
+                console.log("Errore nel recupero dei prodotti.");
+            }
+        });
+
+
+    }
 
 
 </script>

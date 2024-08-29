@@ -78,13 +78,14 @@ class Database {
 
     public function incrementa($id) {
         $id_carrello = $this->controlloCarrello(); 
-        
+       $numero_prodotto = get_db_value("SELECT numero_prodotti FROM prodotticarrello WHERE id_carrello = '$id_carrello' AND id_prodottiCarrello = '$id'");
+        $numero_prodotto++;
         $sql = "UPDATE prodotticarrello 
-                SET numero_prodotti = numero_prodotti + 1 
+                SET numero_prodotti = $numero_prodotto
                 WHERE id_carrello = '$id_carrello' AND id_prodottiCarrello = '$id'";
         
         if ($this->conn->query($sql) === TRUE) {
-            return true;
+            return $numero_prodotto;
         } else {
             return false;
         }
@@ -92,15 +93,23 @@ class Database {
 
     public function decrementa($id) {
         $id_carrello = $this->controlloCarrello();
-        
+        $numero_prodotto = get_db_value("SELECT numero_prodotti FROM prodotticarrello WHERE id_carrello = '$id_carrello' AND id_prodottiCarrello = $id");
+
+        $numero_prodotto--;
+
+        if ($numero_prodotto < 0) {
+            $numero_prodotto = 0;
+        }
+
         $sql = "UPDATE prodotticarrello 
-                SET numero_prodotti = numero_prodotti - 1 
-                WHERE id_carrello = '$id_carrello' AND id_prodottiCarrello = '$id'";
+                SET numero_prodotti = $numero_prodotto
+                WHERE id_carrello = '$id_carrello' AND id_prodottiCarrello = $id";
         
         if ($this->conn->query($sql) === TRUE) {
             return true;
         } else {
-            return false;
+           error_log("Errore nella query di aggiornamento: " . $this->conn->error);
+        return false;
         }
     }
 
@@ -123,5 +132,30 @@ class Database {
         }
         return $id_carrello;
     }
+
+
+    public function ordina() {
+        $id_carrello = $this->controlloCarrello();
+        // $ordine = db_fill_array("SELECT id_prodottiCarrello, numero_prodotti FROM prodotticarrello WHERE id_carrello='$id_carrello'");
+
+        // foreach ($ordine as $item) {
+        //     if (is_array($item)) { // Controlla se $item è un array
+        //         echo "ID Prodotto Carrello: " . $item['id_prodottiCarrello'] . "\n";
+        //         echo "Numero Prodotti: " . $item['numero_prodotti'] . "\n";
+        //     } else {
+        //         error_log("Elemento non valido: " . print_r($item, true));
+        //     }
+        // }
+        
+        $sql = "UPDATE carrello 
+        SET flag_ordinato = 1
+        WHERE id_carrello = '$id_carrello'";
+
+        if ($this->conn->query($sql) === TRUE) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
 }
-?>

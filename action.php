@@ -66,6 +66,15 @@ switch($paction)
     break;  
 
 
+    case "ordina":
+        if ($db->ordina()) {
+            echo 1; 
+        } else {
+            echo 0; 
+        }
+       
+    break;  
+
     
 }   
 ?>
