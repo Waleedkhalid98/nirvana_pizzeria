@@ -262,27 +262,35 @@ echo "IL TUO ID = " . $id_utente;
         });
     }
 
-   
-    function ordina(){
-        $.ajax({
-            type: "POST",
-            url: 'action.php?_action=ordina',
-            dataType: 'json',
-            success: function (result) {
-                console.log(result)
-                if (result=1) {
-                    riempiCarrello()
-                } else {
-                    console.log("err")
-                }
-            },
-            error: function () {
-                console.log("Errore nel recupero dei prodotti.");
+    function ordina() {
+    $.ajax({
+        type: "POST",
+        url: 'action.php?_action=ordina',
+        dataType: 'json',
+        success: function (result) {
+            console.log(result);
+            if (result.status === 1) {
+                riempiCarrello();
+                alert("Ordine completato con successo! Totale: €" + result.data.totale.toFixed(2));
+                console.log("ID Carrello:", result.data.id_carrello);
+                console.log("Prodotti ordinati:", result.data.prodotti);
+            } else {
+                console.error("Errore nell'elaborazione dell'ordine:", result.message);
+                alert("Si è verificato un errore durante l'elaborazione dell'ordine. Riprova più tardi.");
             }
-        });
-
-
-    }
-
+        },
+        error: function (xhr, status, error) {
+            console.error("Errore nella richiesta AJAX:", status, error);
+            console.error("Risposta del server:", xhr.responseText);
+            
+            let errorMessage = "Si è verificato un errore di comunicazione con il server.";
+            if (xhr.responseText.startsWith("<br />") || xhr.responseText.startsWith("<b>")) {
+                errorMessage += " Il server ha generato un errore PHP. Controlla i log del server per maggiori dettagli.";
+            }
+            
+            alert(errorMessage + " Riprova più tardi.");
+        }
+    });
+}
 
 </script>

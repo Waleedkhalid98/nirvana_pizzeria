@@ -136,26 +136,41 @@ class Database {
 
     public function ordina() {
         $id_carrello = $this->controlloCarrello();
-        // $ordine = db_fill_array("SELECT id_prodottiCarrello, numero_prodotti FROM prodotticarrello WHERE id_carrello='$id_carrello'");
-
-        // foreach ($ordine as $item) {
-        //     if (is_array($item)) { // Controlla se $item è un array
-        //         echo "ID Prodotto Carrello: " . $item['id_prodottiCarrello'] . "\n";
-        //         echo "Numero Prodotti: " . $item['numero_prodotti'] . "\n";
-        //     } else {
-        //         error_log("Elemento non valido: " . print_r($item, true));
-        //     }
-        // }
+        
+        $ordine = get_data("SELECT id_prodottiCarrello, numero_prodotti, prezzo  FROM prodotticarrello WHERE id_carrello='$id_carrello'");
+        
+        $totale = 0;
+        $prodotti_ordinati = [];
+        
+        foreach ($ordine as $item) {
+            if (is_array($item)) {
+                $subtotale = $item['numero_prodotti'] * $item['prezzo'];
+                $totale += $subtotale;
+                
+                $prodotti_ordinati[] = [
+                    'id_prodotto_carrello' => $item['id_prodottiCarrello'],
+                    'nome_prodotto' => $item['nome'],
+                    'quantita' => $item['numero_prodotti'],
+                    'prezzo_unitario' => $item['prezzo'],
+                    'subtotale' => $subtotale
+                ];
+            } else {
+                error_log("Elemento non valido nell'ordine: " . print_r($item, true));
+            }
+        }
         
         $sql = "UPDATE carrello 
-        SET flag_ordinato = 1
-        WHERE id_carrello = '$id_carrello'";
-
-        if ($this->conn->query($sql) === TRUE) {
-            return true;
-        } else {
-            return false;
-        }
+                SET flag_ordinato = 1
+                WHERE id_carrello = '$id_carrello'";
+        
+        $update_success = $this->conn->query($sql) === TRUE;
+        
+        return [
+            'success' => $update_success,
+            'id_carrello' => $id_carrello,
+            'prodotti' => $prodotti_ordinati,
+            'totale' => $totale
+        ];
     }
 
 }

@@ -2,10 +2,17 @@
 
 include 'librerie/Database.php';
 include 'librerie/metodi.php';
-
+error_reporting(E_ALL);
+ini_set('display_errors', 0);
+ini_set('log_errors', 1);
+ini_set('error_log', '/path/to/error.log');  
 $db = new Database();
 
-
+function sendJsonResponse($data) {
+    header('Content-Type: application/json');
+    echo json_encode($data);
+    exit;
+}
 
 $paction=get_param("_action");
 
@@ -64,16 +71,34 @@ switch($paction)
         }
        
     break;  
-
-
+    
     case "ordina":
-        if ($db->ordina()) {
-            echo 1; 
-        } else {
-            echo 0; 
+        try {
+            $risultato_ordine = $db->ordina();
+            if ($risultato_ordine['success']) {
+                sendJsonResponse([
+                    'status' => 1,
+                    'message' => 'Ordine completato con successo',
+                    'data' => [
+                        'id_carrello' => $risultato_ordine['id_carrello'],
+                        'totale' => $risultato_ordine['totale'],
+                        'prodotti' => $risultato_ordine['prodotti']
+                    ]
+                ]);
+            } else {
+                sendJsonResponse([
+                    'status' => 0,
+                    'message' => 'Errore durante l\'elaborazione dell\'ordine'
+                ]);
+            }
+        } catch (Exception $e) {
+            error_log("Errore nell'ordine: " . $e->getMessage());
+            sendJsonResponse([
+                'status' => 0,
+                'message' => 'Si è verificato un errore inaspettato'
+            ]);
         }
-       
-    break;  
+        break;
 
     
 }   
