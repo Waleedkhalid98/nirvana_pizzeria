@@ -23,8 +23,76 @@ class Database {
 
 
 
+    public function login($username, $password) {
+        $username = $this->conn->real_escape_string($username);
+        $password = $this->conn->real_escape_string($password);
+        echo "pass".$password;
+        echo "<br>";
+        $sql = "SELECT id_utente, password FROM utenti WHERE username = '$username'";
+        $result = $this->conn->query($sql);
+
+        if ($result->num_rows == 1) {
+            $user = $result->fetch_assoc();
+            print_r( $user);
+            
+            if (password_verify($password, $user['password'])) {
+                echo "entro ancon";
+                $token = $this->generateToken($user['id']);
+                $this->saveToken($user['id'], $token);
+                return $token;
+            }
+        }
+        return false;
+    }
 
 
+    private function generateToken($user_id) {
+        $header = json_encode(['typ' => 'JWT', 'alg' => 'HS256']);
+        $payload = json_encode([
+            'user_id' => $user_id,
+            'exp' => time() + 3600 
+        ]);
+
+        $base64UrlHeader = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($header));
+        $base64UrlPayload = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($payload));
+
+        $signature = hash_hmac('sha256', $base64UrlHeader . "." . $base64UrlPayload, $this->secret_key, true);
+        $base64UrlSignature = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($signature));
+
+        return $base64UrlHeader . "." . $base64UrlPayload . "." . $base64UrlSignature;
+    }
+
+
+
+    private function saveToken($user_id, $token) {
+        $user_id = $this->conn->real_escape_string($user_id);
+        $token = $this->conn->real_escape_string($token);
+        $expires = date('Y-m-d H:i:s', time() + 3600);
+
+        $sql = "INSERT INTO utenti_tokens (id_utente, token, scadenza) VALUES ('$user_id', '$token', '$expires')";
+        $this->conn->query($sql);
+    }
+
+
+    public function verifyToken($token) {
+        $token = $this->conn->real_escape_string($token);
+
+        $sql = "SELECT id_utente FROM utenti_tokens WHERE token = '$token' AND scadenza > NOW()";
+        $result = $this->conn->query($sql);
+
+        if ($result->num_rows == 1) {
+            $tokenParts = explode('.', $token);
+            $payload = json_decode(base64_decode($tokenParts[1]), true);
+            return $payload['user_id'];
+        }
+        return false;
+    }
+
+    public function logout($token) {
+        $token = $this->conn->real_escape_string($token);
+        $sql = "DELETE FROM utenti_tokens WHERE token = '$token'";
+        $this->conn->query($sql);
+    }
 
 
     public function insertProdottoCarrello($id) {
