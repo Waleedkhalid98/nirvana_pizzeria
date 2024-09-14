@@ -6,15 +6,25 @@ class Database {
     private $password = "";
     private $dbname = "nirvana";
     public $conn;
-
+    private $secretKey;
+    
     public function __construct() {
         $this->conn = new mysqli($this->servername, $this->username, $this->password, $this->dbname);
-
+        
         if ($this->conn->connect_error) {
             die("Connessione fallita: " . $this->conn->connect_error);
         }
+        
     }
-
+    
+    private function getSecretKey() {
+        $secret_key=("SELECT secret_key FROM secret_keys WHERE is_active=true");
+        if ($secret_key) {
+            return $secret_key;
+        }
+        throw new Exception("No active secret key found");
+    }
+    
     
 
     public function closeConnection() {
@@ -22,25 +32,83 @@ class Database {
     }
 
 
+    public function registrati($userId, $password) {
+        // Esegui l'hashing della password
+        $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
+    
+        // Prepara la query SQL utilizzando i prepared statements
+        $sql = "INSERT INTO utenti (nome, password) VALUES (?, ?)";
+    
+        // Prepara la query
+        $stmt = $this->conn->prepare($sql);
+    
+        if ($stmt === false) {
+            throw new Exception("Errore nella preparazione della query: " . $this->conn->error);
+        }
+    
+        // Lega i parametri alla query (user_id e hashedPassword)
+        $stmt->bind_param("ss", $userId, $hashedPassword);
+    
+        // Esegue la query
+        $stmt->execute();
+    
+        if ($stmt->affected_rows === 0) {
+            throw new Exception("Inserimento fallito");
+        }
+    
+        // Chiudi lo statement
+        $stmt->close();
+    }
+    
+
+
+    public function createSecretKey($keyName) {
+        // Genera una chiave segreta casuale
+        $secretKey = bin2hex(random_bytes(32)); // Genera una stringa esadecimale di 64 caratteri (256 bit)
+    
+        // Prepara la query SQL
+        $sql = "INSERT INTO secret_keys (key_name, secret_key) VALUES (?, ?)";
+        
+        // Prepara lo statement
+        $stmt = $this->conn->prepare($sql);
+        
+        if ($stmt === false) {
+            throw new Exception("Errore nella preparazione della query: " . $this->conn->error);
+        }
+        
+        // Collega i parametri
+        $stmt->bind_param("ss", $keyName, $secretKey);
+        
+        // Esegue lo statement
+        if (!$stmt->execute()) {
+            throw new Exception("Errore nell'inserimento della chiave: " . $stmt->error);
+        }
+        
+        // Chiude lo statement
+        $stmt->close();
+        
+        return $secretKey;
+    }
 
     public function login($username, $password) {
         $username = $this->conn->real_escape_string($username);
         $password = $this->conn->real_escape_string($password);
-        echo "pass".$password;
-        echo "<br>";
-        $sql = "SELECT id_utente, password FROM utenti WHERE username = '$username'";
+
+        $sql = "SELECT id_utente, password FROM utenti WHERE nome = '$username'";
         $result = $this->conn->query($sql);
 
         if ($result->num_rows == 1) {
             $user = $result->fetch_assoc();
-            print_r( $user);
-            
-            if (password_verify($password, $user['password'])) {
-                echo "entro ancon";
-                $token = $this->generateToken($user['id']);
-                $this->saveToken($user['id'], $token);
+            if ($password==$user['password']) {
+                $token = $this->generateToken($user['id_utente']);
+                $this->saveToken($user['id_utente'], $token);
                 return $token;
+            }else{
+                echo "la pass non è uguale";
             }
+        }
+        else{
+            echo "NON TROVO";
         }
         return false;
     }
@@ -52,11 +120,11 @@ class Database {
             'user_id' => $user_id,
             'exp' => time() + 3600 
         ]);
-
+        $this->secretKey=$this->getSecretKey(); 
         $base64UrlHeader = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($header));
         $base64UrlPayload = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($payload));
 
-        $signature = hash_hmac('sha256', $base64UrlHeader . "." . $base64UrlPayload, $this->secret_key, true);
+        $signature = hash_hmac('sha256', $base64UrlHeader . "." . $base64UrlPayload, $this->secretKey, true);
         $base64UrlSignature = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($signature));
 
         return $base64UrlHeader . "." . $base64UrlPayload . "." . $base64UrlSignature;

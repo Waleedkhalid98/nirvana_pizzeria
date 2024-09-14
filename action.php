@@ -18,6 +18,18 @@ $paction=get_param("_action");
 
 switch($paction) 
 {	
+    
+    case "login":
+        $username=get_param("_username");
+        $password=get_param("_password");
+        if ($db->login($username,$password)) {
+            echo $db->login($username,$password); 
+        } else {
+            echo 0; 
+        }
+       
+    break; 
+
     case "aggiungiProdotto": 
         $idProdotto=get_param("_k");
         

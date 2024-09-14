@@ -69,22 +69,33 @@ function db_fill_array($query) {
   
   return $array;
 }
-
-function get_db_value($k)
+function get_db_value($query, $params = [])
 {
-  $db = new Database();
-  $result = $db->conn->query($k);
+    $db = new Database();
+    $stmt = $db->conn->prepare($query);
 
-  if ($result === false) {
-    error_log("Errore nella query: " . $db->conn->error);
-    return null;
-  }
+    if ($stmt === false) {
+        error_log("Errore nella preparazione della query: " . $db->conn->error);
+        return null;
+    }
 
-  if ($result->num_rows > 0) {
-    $row = $result->fetch_assoc();
-    return reset($row);
-  } else {
-    return null;
-  }
+    if (!empty($params)) {
+        $types = str_repeat('s', count($params));
+        $stmt->bind_param($types, ...$params);
+    }
 
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result === false) {
+        error_log("Errore nell'esecuzione della query: " . $db->conn->error);
+        return null;
+    }
+
+    if ($result->num_rows > 0) {
+        $row = $result->fetch_assoc();
+        return reset($row); 
+    } else {
+        return null;
+    }
 }
