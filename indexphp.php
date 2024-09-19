@@ -87,27 +87,8 @@ echo "IL TUO ID = " . $id_utente;
 
         <button class="btn btn-primary mb-0" onclick="ordina()">aaa</button>
     </div>
-    <div class="col-lg-3">
-                  <div class="input-group">
-                      <span class="input-group-btn">
-                          <button type="button" class="quantity-left-minus btn  "  data-type="minus" data-field="">
-                            <svg class="bi currency-euro .text-primary" role="img" aria-label="Tools">
-                              <use xlink:href="icon/bootstrap-icons.svg#dash-circle"/> 
-                            </svg>                                       
-                          </button>
-                      </span>
-                      <div class="col-2">
-                        <input type="text" id="quantity" name="quantity" class="form-control "  value="1" min="1" max="100"  >
-                      </div>
-                      <span class="input-group-btn">
-                          <button type="button" class="quantity-right-plus btn  " data-type="plus" data-field="">
-                          <svg class="bi currency-euro .text-primary" role="img" aria-label="Tools">
-                            <use xlink:href="icon/bootstrap-icons.svg#plus-circle"/> 
-                          </svg>
-                          </button>
-                      </span>
-                  </div>
-              </div>
+    
+    
     <script src="node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
