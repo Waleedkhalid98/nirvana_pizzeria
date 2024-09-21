@@ -1,11 +1,11 @@
 /* Stile del carrello che scorre da destra */
 #carrello {
     position: fixed;
-    right: -400px; /* Inizia fuori dalla schermata */
+    right: -500px; /* Inizia fuori dalla schermata */
     top: 0;
-    width: 400px;
+    width: 500px;
     height: 100%;
-    background-color: #343a40; /* Grigio scuro */
+    background-color: #161a1d !important; /* Grigio scuro */
     box-shadow: -2px 0 10px rgba(0, 0, 0, 0.8);
     transition: right 0.3s ease;
     z-index: 9999;
