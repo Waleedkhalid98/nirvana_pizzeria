@@ -23,6 +23,7 @@
             background-color: #f9f9f9;
             border-radius: 10px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            color: #000;
         }
         .buttons {
             margin-top: 20px;
@@ -33,6 +34,19 @@
         * {
     color: #000 !important;
 }
+/* Sovrascrivi il colore del testo e del background per i textarea con la classe form-control */
+.form-group textarea.form-control, select.form-control {
+    color: #000 !important;
+    background-color: #fff !important;
+}
+
+/* Anche i placeholder del textarea */
+textarea.form-control::placeholder, select.form-control::placeholder {
+    color: #000 !important;
+    opacity: 1;
+}
+
+
     </style>
 </head>
 <body>
