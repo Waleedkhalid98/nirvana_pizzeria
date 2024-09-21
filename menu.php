@@ -24,9 +24,9 @@ echo "IL TUO ID = " . $id_utente;
 
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="it">
   <head>
-    <title>Pizza - Free Bootstrap 4 Template by Colorlib</title>
+    <title>Menu</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     
@@ -46,6 +46,9 @@ echo "IL TUO ID = " . $id_utente;
     <link rel="stylesheet" href="css/ionicons.min.css">
 
     <link rel="stylesheet" href="css/sidebar.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+
+
     <link rel="stylesheet" href="css/bootstrap-datepicker.css">
     <link rel="stylesheet" href="css/jquery.timepicker.css">
 
@@ -126,14 +129,19 @@ echo "IL TUO ID = " . $id_utente;
 
     </section>
 
-    <!-- Bottone per aprire il carrello -->
-    <button id="btnCarrello" class="btn btn-success">Carrello</button>
+<!-- Bottone per aprire il carrello -->
+<button id="btnCarrello" class="btn btn-primary btn-lg rounded-circle shadow-lg">
+    <i class="fas fa-shopping-cart">Carrello</i>
+</button>
 
-    <!-- Carrello che scorre da destra -->
-    <div id="carrello">
-        <span class="close-cart">&times;</span>
-        <h2>Carrello</h2>
-        <table class="table table-responsive" id="cartTable">
+<!-- Sidebar carrello che scorre da destra -->
+<div id="carrello" class="bg-dark text-light shadow-lg">
+    <div class="d-flex justify-content-between align-items-center p-3 border-bottom">
+        <h2 class="cart-title m-0">Carrello</h2>
+        <span class="close-cart btn btn-danger btn-sm">&times;</span>
+    </div>
+    <div class="p-3">
+        <table class="table table-hover table-borderless text-light" id="cartTable">
             <thead>
                 <tr>
                     <th>Prodotto</th>
@@ -146,9 +154,12 @@ echo "IL TUO ID = " . $id_utente;
                 <!-- I prodotti aggiunti verranno inseriti qui -->
             </tbody>
         </table>
-
-        <button class="btn btn-primary mb-0" onclick="ordina()">aaa</button>
     </div>
+    <div class="p-3 border-top">
+        <button class="btn btn-success btn-block btn-lg" href="riepilogo.html" onclick="ordina()">Ordina Ora</button>
+    </div>
+</div>
+
 
     <footer class="ftco-footer ftco-section img">
     	<div class="overlay"></div>
@@ -321,36 +332,39 @@ echo "IL TUO ID = " . $id_utente;
         });
     }
 
-    function riempiCarrello() {
+function riempiCarrello() {
     $.ajax({
         type: "POST",
         url: 'action.php?_action=FillCarrello',
         dataType: 'json',
         success: function (prodotti) {
-            // console.log("p"+JSON.stringify(prodotti));
             if (prodotti && prodotti !== false && Array.isArray(prodotti) && prodotti.length > 0) {
                 let tableHTML = "";
                 prodotti.forEach(function(prodotto) {
-                    // console.log(prodotto);
                     tableHTML += "<tr>";
                     tableHTML += "<td>" + prodotto.titolo + "</td>";
                     tableHTML += "<td>" + prodotto.prezzo + "€</td>";
                     tableHTML += "<td class='d-flex justify-content-between align-items-center'>";
-                    tableHTML += "<div class='col-4 p-0 '>";
-                    tableHTML += "<button class='btn btn-outline-secondary btn-sm rounded-circle' type='button' onclick='diminuisciQuantita(" + prodotto.id_prodottiCarrello + ")'>";
-                    tableHTML += "<svg width='16' height='16' fill='currentColor'><use xlink:href='icon/bootstrap-icons.svg#dash-circle'/></svg>";
+
+                    // Bottone per diminuire quantità
+                    tableHTML += "<div class='input-group'>";
+                    tableHTML += "<button class='btn btn-outline-secondary btn-sm' type='button' onclick='diminuisciQuantita(" + prodotto.id_prodottiCarrello + ")'>";
+                    tableHTML += "<i class='fas fa-minus-circle'></i>";
+                    tableHTML += "</button>";
+
+                    // Input quantità
+                    tableHTML += "<input type='text' class='form-control form-control-sm text-center' id='quantity_" + prodotto.id_prodottiCarrello + "' value='"+prodotto.numero_prodotti+"' min='1' max='100' readonly>";
+
+                    // Bottone per incrementare quantità
+                    tableHTML += "<button class='btn btn-outline-secondary btn-sm' type='button' onclick='incrementaQuantita(" + prodotto.id_prodottiCarrello + ")'>";
+                    tableHTML += "<i class='fas fa-plus-circle'></i>";
                     tableHTML += "</button>";
                     tableHTML += "</div>";
-                    tableHTML += "<div class='col-4 p-0'>";
-                    tableHTML += "<input type='text' class='form-control form-control-sm text-center' id='quantity_" + prodotto.id_prodottiCarrello + "' value='"+prodotto.numero_prodotti+"' min='1' max='100'>";
-                    tableHTML += "</div>";
-                    tableHTML += "<div class='col-4 p-0'>";
-                    tableHTML += "<button class='btn btn-outline-secondary btn-sm rounded-circle' type='button' onclick='incrementaQuantita(" + prodotto.id_prodottiCarrello + ")'>";
-                    tableHTML += "<svg width='16' height='16' fill='currentColor'><use xlink:href='icon/bootstrap-icons.svg#plus-circle'/></svg>";
-                    tableHTML += "</button>";
-                    tableHTML += "</div>";
+
                     tableHTML += "</td>";
-                    tableHTML += "<td><button class='btn btn-danger btn-sm delete-btn' data-id='" + prodotto.id_prodottiCarrello + "' onclick='eliminaprodotto(" + prodotto.id_prodottiCarrello +")'>Delete</button></td>";
+                    // Bottone per eliminare prodotto
+                    tableHTML += "<td><button class='btn btn-danger btn-sm delete-btn' data-id='" + prodotto.id_prodottiCarrello + "' onclick='eliminaprodotto(" + prodotto.id_prodottiCarrello +")'>";
+                    tableHTML += "<i class='fas fa-trash-alt'></i> Delete</button></td>";
                     tableHTML += "</tr>";
                 });
                 $('#cartTable tbody').html(tableHTML); // Inserisce i prodotti nella tabella
@@ -363,6 +377,7 @@ echo "IL TUO ID = " . $id_utente;
         }
     });
 }
+
 
     
     function incrementaQuantita(id_prodottiCarrello) {
@@ -414,6 +429,9 @@ echo "IL TUO ID = " . $id_utente;
                 alert("Ordine completato con successo! Totale: €" + result.data.totale.toFixed(2));
                 console.log("ID Carrello:", result.data.id_carrello);
                 console.log("Prodotti ordinati:", result.data.prodotti);
+
+                // Reindirizzamento alla pagina riepilogo.html
+                window.location.href = 'riepilogo.html';
             } else {
                 console.error("Errore nell'elaborazione dell'ordine:", result.message);
                 alert("Si è verificato un errore durante l'elaborazione dell'ordine. Riprova più tardi.");
@@ -432,5 +450,6 @@ echo "IL TUO ID = " . $id_utente;
         }
     });
 }
+
 
 </script>
