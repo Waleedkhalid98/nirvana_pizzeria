@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ordine Pub - Multi-step Form</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        .step {
+            display: none;
+        }
+        .step.active {
+            display: block;
+        }
+        .form-container {
+            max-width: 500px;
+            margin: auto;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        .buttons {
+            margin-top: 20px;
+        }
+        .form-control.is-invalid {
+            border-color: red;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container mt-5">
+        <div class="form-container text-center">
+            <h1 class="mb-4">Completa il tuo ordine</h1>
+
+            <form id="orderForm" onsubmit="return false;">
+                <!-- Step 1: Scelta tra Delivery o Asporto -->
+                <div class="step active">
+                    <h2 class="mb-4">Modalità di consegna</h2>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="deliveryType" value="Delivery" id="delivery" required>
+                        <label class="form-check-label" for="delivery">Delivery</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="deliveryType" value="Asporto" id="asporto" required>
+                        <label class="form-check-label" for="asporto">Asporto</label>
+                    </div>
+                </div>
+
+                <!-- Step 2: Nome, Cognome, Indirizzo, Telefono, Email -->
+                <div class="step">
+                    <h2 class="mb-4">Informazioni personali</h2>
+                    <div class="form-group">
+                        <label for="name">Nome:</label>
+                        <input type="text" class="form-control" id="name" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="surname">Cognome:</label>
+                        <input type="text" class="form-control" id="surname" name="surname" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="address">Indirizzo:</label>
+                        <input type="text" class="form-control" id="address" name="address" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Numero di telefono:</label>
+                        <input type="tel" class="form-control" id="phone" name="phone" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email:</label>
+                        <input type="email" class="form-control" id="email" name="email" required>
+                    </div>
+                </div>
+
+                <!-- Step 3: Orario di consegna -->
+                <div class="step">
+                    <h2 class="mb-4">Orario di consegna</h2>
+                    <div class="form-group">
+                        <label for="time">Orario preferito:</label>
+                        <select class="form-control" id="time" name="time" required>
+                            <option value="" disabled selected>Seleziona un orario</option>
+                            <!-- Orari a partire dalle 19:30 con intervalli di 15 minuti -->
+                            <script>
+                                const select = document.getElementById("time");
+                                let start = 19 * 60 + 30; // 19:30 in minuti
+                                const end = 23 * 60; // 23:00 in minuti
+                                for (let i = start; i <= end; i += 15) {
+                                    const hours = Math.floor(i / 60);
+                                    const minutes = i % 60;
+                                    const time = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
+                                    const option = document.createElement("option");
+                                    option.value = time;
+                                    option.textContent = time;
+                                    select.appendChild(option);
+                                }
+                            </script>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Step 4: Riepilogo dell'ordine e riepilogo delle informazioni inserite -->
+                <div class="step">
+                    <h2 class="mb-4">Riepilogo ordine</h2>
+                    <div class="form-group">
+                        <!-- Riepilogo Ordine (Dati dall'altra pagina) -->
+                        <h4>Riepilogo Ordine</h4>
+                        <p><strong>Prodotti ordinati:</strong> <span id="orderDetails">Pizza Margherita, Coca Cola</span></p>
+                        <p><strong>Totale:</strong> <span id="orderTotal">€15.00</span></p>
+                    </div>
+                    <div class="form-group">
+                        <!-- Riepilogo Informazioni inserite -->
+                        <h4>Riepilogo Informazioni</h4>
+                        <p><strong>Modalità di consegna:</strong> <span id="summaryDelivery"></span></p>
+                        <p><strong>Nome e Cognome:</strong> <span id="summaryName"></span></p>
+                        <p><strong>Indirizzo:</strong> <span id="summaryAddress"></span></p>
+                        <p><strong>Numero di telefono:</strong> <span id="summaryPhone"></span></p>
+                        <p><strong>Email:</strong> <span id="summaryEmail"></span></p>
+                        <p><strong>Orario:</strong> <span id="summaryTime"></span></p>
+                    </div>
+                    <div class="form-group">
+                        <label for="notes">Note varie:</label>
+                        <textarea class="form-control" id="notes" name="notes" rows="3"></textarea>
+                    </div>
+                </div>
+
+                <div class="buttons text-center">
+                    <button type="button" class="btn btn-secondary" id="prevBtn" onclick="nextPrev(-1)" style="display:none;">Indietro</button>
+                    <button type="button" class="btn btn-primary" id="nextBtn" onclick="nextPrev(1)">Avanti</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script>
+        let currentStep = 0; 
+        showStep(currentStep);
+
+        function showStep(n) {
+            const steps = document.getElementsByClassName("step");
+            steps[n].classList.add("active");
+
+            document.getElementById("prevBtn").style.display = n == 0 ? "none" : "inline-block";
+            document.getElementById("nextBtn").innerHTML = n == (steps.length - 1) ? "Conferma Ordine" : "Avanti";
+        }
+
+        function nextPrev(n) {
+    const steps = document.getElementsByClassName("step");
+
+    if (n === 1 && !validateStep()) {
+        return false;
+    }
+
+    steps[currentStep].classList.remove("active");
+
+    currentStep += n;
+
+    // Se stai passando all'ultimo step (e quindi attivando il riepilogo)
+    if (currentStep >= steps.length - 1) {
+        updateSummary(); // Chiamata a updateSummary per aggiornare i dati
+        currentStep = steps.length - 1; // Assicurati di restare nell'ultimo step
+        showStep(currentStep); // Mostra l'ultimo step
+        return; // Interrompi l'esecuzione
+    }
+
+    showStep(currentStep);
+}
+
+
+
+        function validateStep() {
+            const steps = document.getElementsByClassName("step");
+            const inputs = steps[currentStep].querySelectorAll("input, select");
+            let valid = true;
+
+            inputs.forEach(input => {
+                if (!input.checkValidity()) {
+                    input.classList.add("is-invalid");
+                    valid = false;
+                } else {
+                    input.classList.remove("is-invalid");
+                }
+            });
+
+            return valid;
+        }
+        function updateSummary() {
+    const deliveryType = document.querySelector('input[name="deliveryType"]:checked');
+    console.log(deliveryType); // Verifica se è selezionato
+    document.getElementById("summaryDelivery").textContent = deliveryType ? deliveryType.value : 'Non specificato';
+
+    console.log("Nome:", document.getElementById("name").value);
+    document.getElementById("summaryName").textContent = document.getElementById("name").value + " " + document.getElementById("surname").value;
+    document.getElementById("summaryAddress").textContent = document.getElementById("address").value;
+    document.getElementById("summaryPhone").textContent = document.getElementById("phone").value;
+    document.getElementById("summaryEmail").textContent = document.getElementById("email").value;
+    document.getElementById("summaryTime").textContent = document.getElementById("time").value;
+}
+
+
+    </script>
+
+</body>
+</html>
