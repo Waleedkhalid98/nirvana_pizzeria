@@ -167,9 +167,9 @@ class Database {
 
        $id_carrello = $this->controlloCarrello();
         $id = $this->conn->real_escape_string($id);
-        // $prezzo=get_db_value("SELECT prezzo FROM prodotto WHERE id=$id");
+        $prezzo=get_db_value("SELECT prezzo FROM prodotto WHERE id=$id");
        
-        $sql = "INSERT INTO prodotticarrello (id_carrello, id_prodotto) VALUES ($id_carrello, '$id')";
+        $sql = "INSERT INTO prodotticarrello (id_carrello, id_prodotto, prezzo,numero_prodotti) VALUES ($id_carrello, '$id','$prezzo',1)";
 
         if ($this->conn->query($sql) === TRUE) {
             return true;
@@ -269,8 +269,69 @@ class Database {
         return $id_carrello;
     }
 
+    
+    private function esisteCarrello() {
+        session_start();    
+
+        $id_utente = $_SESSION['id_utente'];
+        $id_carrello=get_db_value("SELECT id_carrello FROM carrello WHERE id_utente= '$id_utente' AND flag_ordinato IS NULL");
+        if(empty($id_carrello)){
+            return false;
+        }
+    
+        return $id_carrello;
+    }
+
 
     public function ordina() {
+        $id_carrello = $this->esisteCarrello();
+        if($id_carrello){
+            //aggiungere un controllo per vedere se è pieno
+            $ordine = get_data("SELECT id_prodottiCarrello, numero_prodotti, prezzo  FROM prodotticarrello WHERE id_carrello='$id_carrello'");
+            
+            $totale = 0;
+            $prodotti_ordinati = [];
+            
+            foreach ($ordine as $item) {
+                if (is_array($item)) {
+                    $subtotale = $item['numero_prodotti'] * $item['prezzo'];
+                    $totale += $subtotale;
+                    
+                    $prodotti_ordinati[] = [
+                        'id_prodotto_carrello' => $item['id_prodottiCarrello'],
+                        'nome_prodotto' => $item['nome'],
+                        'quantita' => $item['numero_prodotti'],
+                        'prezzo_unitario' => $item['prezzo'],
+                        'subtotale' => $subtotale
+                    ];
+                } else {
+                    error_log("Elemento non valido nell'ordine: " . print_r($item, true));
+                }
+            }
+            
+            $sql = "UPDATE carrello 
+                    SET flag_ordinato = 1
+                    WHERE id_carrello = '$id_carrello'";
+            
+            $update_success = $this->conn->query($sql) === TRUE;
+
+        }else{
+            return [
+                'success' => 0,
+            ];
+        }
+       
+        
+        return [
+            'success' => $update_success,
+            'id_carrello' => $id_carrello,
+            'prodotti' => $prodotti_ordinati,
+            'totale' => $totale
+        ];
+    }
+
+
+    public function riepilogo() {
         $id_carrello = $this->controlloCarrello();
         
         $ordine = get_data("SELECT id_prodottiCarrello, numero_prodotti, prezzo  FROM prodotticarrello WHERE id_carrello='$id_carrello'");
@@ -295,14 +356,9 @@ class Database {
             }
         }
         
-        $sql = "UPDATE carrello 
-                SET flag_ordinato = 1
-                WHERE id_carrello = '$id_carrello'";
-        
-        $update_success = $this->conn->query($sql) === TRUE;
-        
+    
         return [
-            'success' => $update_success,
+            'success' => TRUE,
             'id_carrello' => $id_carrello,
             'prodotti' => $prodotti_ordinati,
             'totale' => $totale

@@ -6,6 +6,7 @@
     <title>Ordine Pub - Multi-step Form</title>
     <!-- Bootstrap CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <style>
         .step {
@@ -107,8 +108,11 @@
                     <div class="form-group">
                         <!-- Riepilogo Ordine (Dati dall'altra pagina) -->
                         <h4>Riepilogo Ordine</h4>
-                        <p><strong>Prodotti ordinati:</strong> <span id="orderDetails">Pizza Margherita, Coca Cola</span></p>
-                        <p><strong>Totale:</strong> <span id="orderTotal">€15.00</span></p>
+                        <div id="riepilogoOrdine">
+                            <!-- I dettagli dell'ordine verranno aggiunti dinamicamente qui -->
+                            <p id="ordineVuoto">Caricamento dei dettagli dell'ordine...</p>
+                        </div>
+                        <p><strong>Totale:</strong> <span id="riepilogoTotale">€0.00</span></p>
                     </div>
                     <div class="form-group">
                         <!-- Riepilogo Informazioni inserite -->
@@ -134,11 +138,6 @@
         </div>
     </div>
 
-    <!-- Bootstrap JS and dependencies -->
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-
     <script>
         let currentStep = 0; 
         showStep(currentStep);
@@ -152,28 +151,37 @@
         }
 
         function nextPrev(n) {
-    const steps = document.getElementsByClassName("step");
+            const steps = document.getElementsByClassName("step");
 
-    if (n === 1 && !validateStep()) {
-        return false;
-    }
+            if (n === 1 && !validateStep()) {
+                return false;
+            }
 
-    steps[currentStep].classList.remove("active");
+            steps[currentStep].classList.remove("active");
 
-    currentStep += n;
+            currentStep += n;
 
-    // Se stai passando all'ultimo step (e quindi attivando il riepilogo)
-    if (currentStep >= steps.length - 1) {
-        updateSummary(); // Chiamata a updateSummary per aggiornare i dati
-        currentStep = steps.length - 1; // Assicurati di restare nell'ultimo step
-        showStep(currentStep); // Mostra l'ultimo step
-        return; // Interrompi l'esecuzione
-    }
+            // Se siamo all'ultimo step, chiama la funzione riepilogo
+            if (currentStep >= steps.length - 1) {
+                updateSummary(); // Aggiorna il riepilogo con i dati inseriti
+                currentStep = steps.length - 1; // Assicurati di restare nell'ultimo step
 
-    showStep(currentStep);
-}
+                // Chiama la funzione riepilogo per ottenere i dati dell'ordine
+                riepilogo();
+
+                
+                // Chiama la funzione ordina per confermare l'ordine quando l'utente clicca su "Conferma Ordine"
+                document.getElementById("nextBtn").addEventListener("click", function() {
+                    ordina(); // Invia l'ordine quando si conferma
+                });
 
 
+                showStep(currentStep);
+                return;
+            }
+
+            showStep(currentStep);
+        }
 
         function validateStep() {
             const steps = document.getElementsByClassName("step");
@@ -191,21 +199,84 @@
 
             return valid;
         }
+
         function updateSummary() {
-    const deliveryType = document.querySelector('input[name="deliveryType"]:checked');
-    console.log(deliveryType); // Verifica se è selezionato
-    document.getElementById("summaryDelivery").textContent = deliveryType ? deliveryType.value : 'Non specificato';
+            const deliveryType = document.querySelector('input[name="deliveryType"]:checked');
+            document.getElementById("summaryDelivery").textContent = deliveryType ? deliveryType.value : '';
+            document.getElementById("summaryName").textContent = document.getElementById("name").value + " " + document.getElementById("surname").value;
+            document.getElementById("summaryAddress").textContent = document.getElementById("address").value;
+            document.getElementById("summaryPhone").textContent = document.getElementById("phone").value;
+            document.getElementById("summaryEmail").textContent = document.getElementById("email").value;
+            document.getElementById("summaryTime").textContent = document.getElementById("time").value;
+        }
 
-    console.log("Nome:", document.getElementById("name").value);
-    document.getElementById("summaryName").textContent = document.getElementById("name").value + " " + document.getElementById("surname").value;
-    document.getElementById("summaryAddress").textContent = document.getElementById("address").value;
-    document.getElementById("summaryPhone").textContent = document.getElementById("phone").value;
-    document.getElementById("summaryEmail").textContent = document.getElementById("email").value;
-    document.getElementById("summaryTime").textContent = document.getElementById("time").value;
-}
+        function riepilogo() {
+            $.ajax({
+                type: "POST",
+                url: 'action.php?_action=riepilogo',
+                dataType: 'json',
+                success: function (result) {
+                    if (result.status === 1) {
+                        document.getElementById("ordineVuoto").style.display = 'none';
+
+                        const riepilogoOrdineDiv = document.getElementById("riepilogoOrdine");
+                        riepilogoOrdineDiv.innerHTML = "";
+
+                        result.data.prodotti.forEach(prodotto => {
+                            const prodottoElement = document.createElement("p");
+                            prodottoElement.innerHTML = `${prodotto.quantita}x ${prodotto.nome_prodotto} - €${prodotto.subtotale.toFixed(2)}`;
+                            riepilogoOrdineDiv.appendChild(prodottoElement);
+                        });
+
+                        document.getElementById("riepilogoTotale").textContent = `€${result.data.totale.toFixed(2)}`;
+
+                    } else {
+                        alert("Errore durante il caricamento del riepilogo.");
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error("Errore nella richiesta AJAX:", status, error);
+                    alert("Si è verificato un errore. Riprova più tardi.");
+                }
+            });
+        }
 
 
+
+        
+        function ordina() {
+        $.ajax({
+            type: "POST",
+            url: 'action.php?_action=ordina',
+            dataType: 'json',
+            success: function (result) {
+                console.log(result);
+                if (result.status === 1) {
+                    alert("Ordine completato con successo! Totale: €" + result.data.totale.toFixed(2));
+                    console.log("ID Carrello:", result.data.id_carrello);
+                    console.log("Prodotti ordinati:", result.data.prodotti);
+                } else {
+                    console.error("Errore nell'elaborazione dell'ordine:", result.message);
+                    alert("Si è verificato un errore durante l'elaborazione dell'ordine. Riprova più tardi.");
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error("Errore nella richiesta AJAX:", status, error);
+                console.error("Risposta del server:", xhr.responseText);
+                
+                let errorMessage = "Si è verificato un errore di comunicazione con il server.";
+                if (xhr.responseText.startsWith("<br />") || xhr.responseText.startsWith("<b>")) {
+                    errorMessage += " Il server ha generato un errore PHP. Controlla i log del server per maggiori dettagli.";
+                }
+                
+                alert(errorMessage + " Riprova più tardi.");
+            }
+        });
+    }
     </script>
+
+    <!-- Bootstrap JS -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
 </body>
 </html>

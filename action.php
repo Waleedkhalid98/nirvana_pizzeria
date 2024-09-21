@@ -110,7 +110,37 @@ switch($paction)
                 'message' => 'Si è verificato un errore inaspettato'
             ]);
         }
-        break;
+    break;
+
+
+
+    case "riepilogo":
+        try {
+            $risultato_ordine = $db->riepilogo();
+            if ($risultato_ordine['success']) {
+                sendJsonResponse([
+                    'status' => 1,
+                    'message' => 'Riepilogo',
+                    'data' => [
+                        'id_carrello' => $risultato_ordine['id_carrello'],
+                        'totale' => $risultato_ordine['totale'],
+                        'prodotti' => $risultato_ordine['prodotti']
+                    ]
+                ]);
+            } else {
+                sendJsonResponse([
+                    'status' => 0,
+                    'message' => 'Errore durante l\'elaborazione dell\'ordine'
+                ]);
+            }
+        } catch (Exception $e) {
+            error_log("Errore nell'ordine: " . $e->getMessage());
+            sendJsonResponse([
+                'status' => 0,
+                'message' => 'Si è verificato un errore inaspettato'
+            ]);
+        }
+    break;
 
     
 }   
