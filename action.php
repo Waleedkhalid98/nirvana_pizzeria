@@ -86,7 +86,15 @@ switch($paction)
     
     case "ordina":
         try {
-            $risultato_ordine = $db->ordina();
+            $nome = get_param("nome");
+            $cognome = get_param("cognome");
+            $indirizzo = get_param("indirizzo");
+            $telefono = get_param("telefono");
+            $email = get_param("email");
+            $orarioConsegna = get_param("orarioConsegna");
+            $note = get_param("note");
+            $deliveryType = get_param("deliveryType");
+            $risultato_ordine = $db->ordina($nome, $cognome, $indirizzo, $telefono, $email, $orarioConsegna, $note, $deliveryType);
             if ($risultato_ordine['success']) {
                 sendJsonResponse([
                     'status' => 1,

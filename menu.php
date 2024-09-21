@@ -173,7 +173,7 @@ $id_utente = $_SESSION['id_utente'];
         </table>
     </div>
     <div class="p-3 border-top">
-        <button class="btn btn-success btn-block btn-lg" href="riepilogo.html" onclick="ordina()">Ordina Ora</button>
+        <a class="btn btn-success btn-block btn-lg" href="riepilogo.html" >Ordina Ora</a>
     </div>
 </div>
 

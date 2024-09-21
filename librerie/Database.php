@@ -1,5 +1,4 @@
 <?php
-
 class Database {
     private $servername = "localhost";
     private $username = "root";
@@ -282,12 +281,12 @@ class Database {
         return $id_carrello;
     }
 
-
-    public function ordina() {
+    public function ordina($nome, $cognome, $indirizzo, $telefono, $email, $orarioConsegna, $note, $deliveryType) {
         $id_carrello = $this->esisteCarrello();
-        if($id_carrello){
-            //aggiungere un controllo per vedere se è pieno
-            $ordine = get_data("SELECT id_prodottiCarrello, numero_prodotti, prezzo  FROM prodotticarrello WHERE id_carrello='$id_carrello'");
+        
+        if ($id_carrello) {
+            // Recupera i prodotti nel carrello
+            $ordine = get_data("SELECT id_prodottiCarrello, numero_prodotti, prezzo, id_prodotto FROM prodotticarrello WHERE id_carrello='$id_carrello'");
             
             $totale = 0;
             $prodotti_ordinati = [];
@@ -296,10 +295,10 @@ class Database {
                 if (is_array($item)) {
                     $subtotale = $item['numero_prodotti'] * $item['prezzo'];
                     $totale += $subtotale;
-                    
+                    $nomeProdotto = get_db_value("SELECT descrizione FROM prodotto WHERE id='" . $item['id_prodotto'] . "'");
                     $prodotti_ordinati[] = [
                         'id_prodotto_carrello' => $item['id_prodottiCarrello'],
-                        'nome_prodotto' => $item['nome'],
+                        'nomeProdotto' => $nomeProdotto,
                         'quantita' => $item['numero_prodotti'],
                         'prezzo_unitario' => $item['prezzo'],
                         'subtotale' => $subtotale
@@ -309,32 +308,61 @@ class Database {
                 }
             }
             
-            $sql = "UPDATE carrello 
-                    SET flag_ordinato = 1
-                    WHERE id_carrello = '$id_carrello'";
-            
-            $update_success = $this->conn->query($sql) === TRUE;
-
-        }else{
+            // Converti il tipo di consegna in un valore numerico per il database (1 = Delivery, 2 = Asporto)
+            $tipologia = ($deliveryType === 'Delivery') ? 1 : 2;
+    
+            // Inserisci i dettagli dell'ordine nella tabella `carrello_dettaglio`
+            if ($this->inserisciDettagliOrdine($id_carrello, $tipologia, $orarioConsegna, $note)) {
+                // Salva le informazioni dell'utente
+                if ($this->salvaInformazioniUtente($nome, $cognome, $email, $indirizzo, $telefono, $id_carrello)) {
+                    // Aggiorna il flag "ordinato" per il carrello
+                    $sql = "UPDATE carrello 
+                            SET flag_ordinato = 1
+                            WHERE id_carrello = '$id_carrello'";
+                    
+                    $update_success = $this->conn->query($sql) === TRUE;
+    
+                    // Invia email con i dettagli dell'ordine
+                    $invioMail = $this->inviaEmailOrdine($nome, $cognome, $indirizzo, $telefono, $email, $orarioConsegna, $note, $deliveryType, $prodotti_ordinati, $totale);
+                    
+                    if ($invioMail) {
+                        return [
+                            'success' => $update_success,
+                            'id_carrello' => $id_carrello,
+                            'prodotti' => $prodotti_ordinati,
+                            'totale' => $totale
+                        ];
+                    } else {
+                        return [
+                            'success' => 0,
+                        ];
+                    }
+                } else {
+                    return [
+                        'success' => 0,
+                        'message' => 'Errore durante il salvataggio delle informazioni utente.'
+                    ];
+                }
+            } else {
+                return [
+                    'success' => 0,
+                    'message' => 'Errore durante l\'inserimento dei dettagli dell\'ordine.'
+                ];
+            }
+        } else {
             return [
                 'success' => 0,
             ];
         }
-       
-        
-        return [
-            'success' => $update_success,
-            'id_carrello' => $id_carrello,
-            'prodotti' => $prodotti_ordinati,
-            'totale' => $totale
-        ];
     }
+    
+
 
 
     public function riepilogo() {
         $id_carrello = $this->controlloCarrello();
         
-        $ordine = get_data("SELECT id_prodottiCarrello, numero_prodotti, prezzo  FROM prodotticarrello WHERE id_carrello='$id_carrello'");
+        $ordine = get_data("SELECT id_prodottiCarrello, numero_prodotti, prezzo, id_prodotto  FROM prodotticarrello WHERE id_carrello='$id_carrello'");
         
         $totale = 0;
         $prodotti_ordinati = [];
@@ -343,10 +371,10 @@ class Database {
             if (is_array($item)) {
                 $subtotale = $item['numero_prodotti'] * $item['prezzo'];
                 $totale += $subtotale;
-                
+                $nomeProdotto = get_db_value("SELECT descrizione FROM prodotto WHERE id='" . $item['id_prodotto'] . "'");
                 $prodotti_ordinati[] = [
                     'id_prodotto_carrello' => $item['id_prodottiCarrello'],
-                    'nome_prodotto' => $item['nome'],
+                    'nomeProdotto' => $nomeProdotto,
                     'quantita' => $item['numero_prodotti'],
                     'prezzo_unitario' => $item['prezzo'],
                     'subtotale' => $subtotale
@@ -365,4 +393,92 @@ class Database {
         ];
     }
 
+    private function inviaEmailOrdine($nome, $cognome, $indirizzo, $telefono, $email, $orarioConsegna, $note, $deliveryType, $prodotti_ordinati, $totale) {
+        require 'PHPMailer/src/Exception.php';
+        require 'PHPMailer/src/PHPMailer.php';
+        require 'PHPMailer/src/SMTP.php';
+        $mail = new PHPMailer\PHPMailer\PHPMailer();
+    
+        try {
+            $mail->IsSMTP(); 
+            $mail->SMTPSecure = 'tls'; 
+            $mail->Port = 587;
+            $mail->Host = "smtp.gmail.com"; 
+            $mail->SMTPAuth = true;
+            $mail->isHTML(true);
+            $mail->Username = "slvtr.lorenzo01@gmail.com";  
+            $mail->Password = "sdnp lnie tvvk gsmu";  // Non lasciare mai le password nel codice finale!
+            
+            // Mittente e destinatario
+            $mail->setFrom('mittente@email.com', 'Sistema Ordini');
+            $mail->addAddress($email);  
+            // Oggetto dell'email
+            $mail->Subject = 'Nuovo Ordine Ricevuto da ' . $nome . ' ' . $cognome;
+        
+            // Corpo dell'email
+            $body = "<h1>Riepilogo Ordine</h1>";
+            $body .= "<p>Un nuovo ordine è stato effettuato. Di seguito i dettagli del cliente:</p>";
+            
+            // Elenco puntato dei dettagli dell'utente
+            $body .= "<ul>";
+            $body .= "<li><strong>Nome:</strong> $nome $cognome</li>";
+            $body .= "<li><strong>Indirizzo:</strong> $indirizzo</li>";
+            $body .= "<li><strong>Telefono:</strong> $telefono</li>";
+            $body .= "<li><strong>Email:</strong> $email</li>";
+            $body .= "<li><strong>Orario di Consegna:</strong> $orarioConsegna</li>";
+            $body .= "<li><strong>Note:</strong> $note</li>";
+            $body .= "<li><strong>Tipo di Consegna:</strong> $deliveryType</li>";
+            $body .= "</ul>";
+    
+            // Aggiungi i prodotti ordinati in una tabella
+            $body .= "<h2>Prodotti Ordinati</h2>";
+            $body .= "<table border='1' cellpadding='5' cellspacing='0'>";
+            $body .= "<thead><tr><th>Prodotto</th><th>Quantità</th><th>Prezzo Unitario</th><th>Subtotale</th></tr></thead>";
+            $body .= "<tbody>";
+        
+            // Aggiungi i prodotti all'email
+            foreach ($prodotti_ordinati as $prodotto) {
+                $body .= "<tr>
+                            <td>{$prodotto['nomeProdotto']}</td>
+                            <td>{$prodotto['quantita']}</td>
+                            <td>€" . number_format($prodotto['prezzo_unitario'], 2) . "</td>
+                            <td>€" . number_format($prodotto['subtotale'], 2) . "</td>
+                          </tr>";
+            }
+    
+            $body .= "</tbody>";
+            $body .= "</table>";
+            
+            // Totale dell'ordine
+            $body .= "<p><strong>Totale Ordine: €" . number_format($totale, 2) . "</strong></p>";
+    
+            // Imposta il corpo dell'email
+            $mail->Body = $body;
+        
+            // Invia l'email
+            if ($mail->send()) {
+                return true;
+            } else {
+                echo "Errore durante l'invio dell'email.";
+            }
+        } catch (Exception $e) {
+            echo "Errore: " . $mail->ErrorInfo;
+        }
+    }
+
+    private function inserisciDettagliOrdine($id_carrello, $tipologia, $orarioConsegna, $note) {
+        $sqlDettagli = "INSERT INTO carrello_dettaglio (id_carrello, tipologia, orario_consegna, note)
+                        VALUES ('$id_carrello', '$tipologia', '$orarioConsegna', '$note')";
+        
+        return $this->conn->query($sqlDettagli) === TRUE;
+    }
+        
+    private function salvaInformazioniUtente($nome, $cognome, $email, $indirizzo, $telefono, $id_carrello) {
+        $sqlUtente = "INSERT INTO utente_carrello (nome, cognome, email, indirizzo, telefono, id_carrello)
+                      VALUES ('$nome', '$cognome', '$email', '$indirizzo', '$telefono', '$id_carrello')";
+        
+        return $this->conn->query($sqlUtente) === TRUE;
+    }
+    
+    
 }

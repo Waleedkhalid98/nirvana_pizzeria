@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ordine Pub - Multi-step Form</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <style>
+        .step {
+            display: none;
+        }
+        .step.active {
+            display: block;
+        }
+        .form-container {
+            max-width: 500px;
+            margin: auto;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            color: #000;
+        }
+        .buttons {
+            margin-top: 20px;
+        }
+        .form-control.is-invalid {
+            border-color: red;
+        }
+        * {
+    color: #000 !important;
+}
+/* Sovrascrivi il colore del testo e del background per i textarea con la classe form-control */
+.form-group textarea.form-control, select.form-control {
+    color: #000 !important;
+    background-color: #fff !important;
+}
+
+/* Anche i placeholder del textarea */
+textarea.form-control::placeholder, select.form-control::placeholder {
+    color: #000 !important;
+    opacity: 1;
+}
+
+
+    </style>
+</head>
+<body>
+
+    <div class="container mt-5 text-white-custom">
+        <div class="form-container text-center">
+            <h1 class="mb-4">Ordine completato </h1>
+
+            <form >
+                <!-- Step 1: Scelta tra Delivery o Asporto -->
+               
+
+             
+
+                <div class="buttons text-center">
+                    <a type="button" class="btn btn-primary" href="menu.php" id="nextBtn" >Torna al menu</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+      
+    </script>
+
+    <!-- Bootstrap JS -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+</body>
+</html>

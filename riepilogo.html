@@ -242,7 +242,7 @@ textarea.form-control::placeholder, select.form-control::placeholder {
 
                         result.data.prodotti.forEach(prodotto => {
                             const prodottoElement = document.createElement("p");
-                            prodottoElement.innerHTML = `${prodotto.quantita}x ${prodotto.nome_prodotto} - €${prodotto.subtotale.toFixed(2)}`;
+                            prodottoElement.innerHTML = `${prodotto.quantita}x ${prodotto.nomeProdotto} - €${prodotto.subtotale.toFixed(2)}`;
                             riepilogoOrdineDiv.appendChild(prodottoElement);
                         });
 
@@ -261,36 +261,54 @@ textarea.form-control::placeholder, select.form-control::placeholder {
 
 
 
-        
         function ordina() {
+        // Recupera i dati dell'utente dal form
+        const nome = $('#name').val();
+        const cognome = $('#surname').val();
+        const indirizzo = $('#address').val();
+        const telefono = $('#phone').val();
+        const email = $('#email').val();
+        const orarioConsegna = $('#time').val();
+        const note = $('#notes').val();
+        const deliveryType = $('input[name="deliveryType"]:checked').val();
+
+        // Invia la richiesta AJAX con i dati dell'utente
         $.ajax({
             type: "POST",
             url: 'action.php?_action=ordina',
             dataType: 'json',
-            success: function (result) {
-                console.log(result);
+            data: {
+                nome: nome,
+                cognome: cognome,
+                indirizzo: indirizzo,
+                telefono: telefono,
+                email: email,
+                orarioConsegna: orarioConsegna,
+                note: note,
+                deliveryType: deliveryType
+            },
+            success: function(result) {
                 if (result.status === 1) {
                     alert("Ordine completato con successo! Totale: €" + result.data.totale.toFixed(2));
-                    console.log("ID Carrello:", result.data.id_carrello);
-                    console.log("Prodotti ordinati:", result.data.prodotti);
+
+                    // Reindirizza alla pagina di conferma/conclusione
+                    window.location.href = 'conclusione.html';
                 } else {
                     console.error("Errore nell'elaborazione dell'ordine:", result.message);
-                    alert("Si è verificato un errore durante l'elaborazione dell'ordine. Riprova più tardi.");
+                    alert("Si è verificato un errore. Riprova più tardi.");
                 }
             },
-            error: function (xhr, status, error) {
-                console.error("Errore nella richiesta AJAX:", status, error);
-                console.error("Risposta del server:", xhr.responseText);
-                
+            error: function(xhr, status, error) {
+                console.error("Errore nella richiesta AJAX:", error);
                 let errorMessage = "Si è verificato un errore di comunicazione con il server.";
                 if (xhr.responseText.startsWith("<br />") || xhr.responseText.startsWith("<b>")) {
-                    errorMessage += " Il server ha generato un errore PHP. Controlla i log del server per maggiori dettagli.";
+                    errorMessage += " Il server ha generato un errore PHP.";
                 }
-                
                 alert(errorMessage + " Riprova più tardi.");
             }
         });
     }
+
     </script>
 
     <!-- Bootstrap JS -->
