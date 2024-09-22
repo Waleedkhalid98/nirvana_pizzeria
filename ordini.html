@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestionale Pizzeria</title>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="bootstrap-5.3.3/css/bootstrap.min.css">
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="#">Navbar</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" href="#">Ordini</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">Utenti</a>
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Dropdown
+          </a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="#">Ordini</a></li>
+            <li><a class="dropdown-item" href="#">Utenti</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="#">Configurazioni</a></li>
+          </ul>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link " aria-disabled="true">Configurazioni</a>
+        </li>
+      </ul>
+      <form class="d-flex" role="search">
+        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+        <button class="btn btn-outline-success" type="submit">Search</button>
+      </form>
+    </div>
+  </div>
+</nav>
+
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header">
+            Elenco Ordini
+        </div>
+        <div class="card-body">
+            <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
+                <input type="radio" class="btn-check" name="btnradio" id="btnradio1" autocomplete="off" checked>
+                <label class="btn btn-outline-dark" for="btnradio1">Non Confermati</label>
+
+                <input type="radio" class="btn-check" name="btnradio" id="btnradio2" autocomplete="off">
+                <label class="btn btn-outline-dark" for="btnradio2">Confermati</label>
+            </div>
+
+            <table class="table table-striped mt-3" id="tabellaNonConfermati">
+                <thead>
+                    <tr>
+                        <th scope="col">id_carrello</th>
+                        <th scope="col">nome</th>
+                        <th scope="col">cognome</th>
+                        <th scope="col">email</th>
+                        <th scope="col">Stato</th>
+                    </tr>
+                </thead>
+                <tbody id="elencoOrdini">
+                    <!-- I dati degli ordini non confermati verranno inseriti qui -->
+                </tbody>
+            </table>
+
+            <table class="table table-striped mt-3 d-none" id="tabellaConfermati">
+                <thead>
+                    <tr>
+                        <th scope="col">id_carrello</th>
+                        <th scope="col">nome</th>
+                        <th scope="col">cognome</th>
+                        <th scope="col">email</th>
+                        <th scope="col">Stato</th>
+                    </tr>
+                </thead>
+                <tbody id="elencoOrdiniConfermati">
+                    <!-- I dati degli ordini confermati verranno inseriti qui -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script src="bootstrap-5.3.3/js/bootstrap.bundle.min.js"></script>
+
+<script>
+  $(document).ready(function() {
+        elencoOrdini(); // Richiama la funzione per riempire gli ordini
+        $("#btnradio1").change(function() {
+            $("#tabellaNonConfermati").removeClass("d-none");
+            $("#tabellaConfermati").addClass("d-none");
+        });
+
+        $("#btnradio2").change(function() {
+            $("#tabellaNonConfermati").addClass("d-none");
+            $("#tabellaConfermati").removeClass("d-none");
+        });
+    });
+
+  
+  
+function elencoOrdini() {
+    $.ajax({
+        type: "POST",
+        url: 'action.php?_action=elencoOrdini',
+        dataType: 'json',
+        success: function (result) {
+            if (result.status === 1) {
+                const elencoOrdini = $("#elencoOrdini");
+                elencoOrdini.empty();
+                
+                result.data.elencoOrdini.forEach(ordine => {
+                  const ordineRow = `
+                        <tr>
+                            <td>${ordine.id_carrello}</td>
+                            <td>${ordine.nome} </td>
+                            <td>${ordine.cognome}</td>
+                            <td>${ordine.email}</td>
+                            <td>${ordine.flag_confermato}</td>
+                        </tr>
+                    `;
+                    elencoOrdini.append(ordineRow);
+                });
+
+                $("#riepilogoTotale").text(`€${result.data.totale.toFixed(2)}`);
+
+            } else {
+                alert("Errore durante il caricamento del riepilogo.");
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error("Errore nella richiesta AJAX:", status, error);
+            alert("Si è verificato un errore. Riprova più tardi.");
+        }
+    });
+}
+</script>
+</body>
+</html>

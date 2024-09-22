@@ -150,6 +150,32 @@ switch($paction)
         }
     break;
 
+    case "elencoOrdini":
+        try {
+            $risultato_ordine = $db->elencoOrdini();
+            if ($risultato_ordine['success']) {
+                sendJsonResponse([
+                    'status' => 1,
+                    'message' => 'elencoOrdini',
+                    'data' => [
+                        'elencoOrdini' => $risultato_ordine['elencoOrdini']
+                    ]
+                ]);
+            } else {
+                sendJsonResponse([
+                    'status' => 0,
+                    'message' => 'Errore durante l\'elaborazione dell\'ordine'
+                ]);
+            }
+        } catch (Exception $e) {
+            error_log("Errore nell'ordine: " . $e->getMessage());
+            sendJsonResponse([
+                'status' => 0,
+                'message' => 'Si è verificato un errore inaspettato'
+            ]);
+        }
+    break;
+
     
 }   
 ?>

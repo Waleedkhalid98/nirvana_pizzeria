@@ -393,6 +393,38 @@ class Database {
         ];
     }
 
+    public function elencoOrdini() {
+        
+        $ordini = get_data("SELECT  * 
+        FROM carrello
+        INNER JOIN utente_carrello ON carrello.id_carrello = utente_carrello.id_carrello
+        INNER JOIN carrello_dettaglio ON carrello.id_carrello = carrello_dettaglio.id_carrello
+        WHERE carrello.flag_conferma IS NULL 
+          AND carrello.flag_ordinato IS NOT NULL;");
+
+        $elencoOrdini = [];
+        
+        foreach ($ordini as $item) {
+            if (is_array($item)) {
+                $elencoOrdini[] = [
+                    'id_carrello ' => $item['id_carrello '],
+                    'nome' => $item['nome'],
+                    'cognome' => $item['cognome'],
+                    'email' => $item['email'],
+                    'flag_confermato' => $item['flag_confermato']
+                ];
+            } else {
+                error_log("Elemento non valido nell'ordine: " . print_r($item, true));
+            }
+        }
+        
+    
+        return [
+            'success' => TRUE,
+            'elencoOrdini' => $elencoOrdini
+        ];
+    }
+
     private function inviaEmailOrdine($nome, $cognome, $indirizzo, $telefono, $email, $orarioConsegna, $note, $deliveryType, $prodotti_ordinati, $totale) {
         require 'PHPMailer/src/Exception.php';
         require 'PHPMailer/src/PHPMailer.php';
