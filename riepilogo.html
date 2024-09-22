@@ -349,7 +349,7 @@ input.form-control:focus, textarea.form-control:focus, select.form-control:focus
                     alert("Ordine completato con successo! Totale: €" + result.data.totale.toFixed(2));
 
                     // Reindirizza alla pagina di conferma/conclusione
-                     window.location.href = 'conclusione.html';
+                    window.location.href = 'conclusione.html';
                 } else {
                     console.error("Errore nell'elaborazione dell'ordine:", result.message);
                     alert("Si è verificato un errore. Riprova più tardi.");
