@@ -47,6 +47,17 @@ textarea.form-control::placeholder, select.form-control::placeholder {
 }
 
 
+input.form-control, textarea.form-control, select.form-control {
+    border: 1px solid #000 !important; /* Forza il bordo nero */
+    color: #000 !important; /* Assicurati che il testo sia nero */
+}
+
+input.form-control:focus, textarea.form-control:focus, select.form-control:focus {
+    border-color: #000 !important; /* Forza il bordo nero anche quando è in focus */
+    box-shadow: none !important; /* Rimuovi eventuali ombre predefinite */
+}
+
+
     </style>
 </head>
 <body>
@@ -124,8 +135,7 @@ textarea.form-control::placeholder, select.form-control::placeholder {
                 <div class="step">
                     <h2 class="mb-4">Riepilogo ordine</h2>
                     <div class="form-group">
-                        <!-- Riepilogo Ordine (Dati dall'altra pagina) -->
-                        <h4>Riepilogo Ordine</h4>
+
                         <div id="riepilogoOrdine">
                             <!-- I dettagli dell'ordine verranno aggiunti dinamicamente qui -->
                             <p id="ordineVuoto">Caricamento dei dettagli dell'ordine...</p>
@@ -134,7 +144,7 @@ textarea.form-control::placeholder, select.form-control::placeholder {
                     </div>
                     <div class="form-group">
                         <!-- Riepilogo Informazioni inserite -->
-                        <h4>Riepilogo Informazioni</h4>
+                        <h4 class="mt-2 mb-2">Riepilogo Informazioni</h4>
                         <p><strong>Modalità di consegna:</strong> <span id="summaryDelivery"></span></p>
                         <p><strong>Nome e Cognome:</strong> <span id="summaryName"></span></p>
                         <p><strong>Indirizzo:</strong> <span id="summaryAddress"></span></p>
@@ -153,6 +163,7 @@ textarea.form-control::placeholder, select.form-control::placeholder {
                     <button type="button" class="btn btn-primary" id="nextBtn" onclick="nextPrev(1)">Avanti</button>
                 </div>
             </form>
+
         </div>
     </div>
 

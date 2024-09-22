@@ -69,7 +69,7 @@ $id_utente = $_SESSION['id_utente'];
 	          <li class="nav-item"><a href="index.html" class="nav-link">Home</a></li>
 	          <li class="nav-item active"><a href="menu.php" class="nav-link">Menu</a></li>
 	          <li class="nav-item"><a href="blog.html" class="nav-link">Blog</a></li>
-	          <li class="nav-item"><a href="contact.html" class="nav-link">Contact</a></li>
+	          <li class="nav-item"><a href="contatti.html" class="nav-link">Contatti</a></li>
 	        </ul>
 	      </div>
 		  </div>
@@ -98,6 +98,14 @@ $id_utente = $_SESSION['id_utente'];
     position: relative;
     z-index: 0; /* Contenuto sopra l'overlay */
 }
+
+#btnCarrello {
+    font-size: 14px;
+    padding: 8px 12px;
+    width: auto; /* Mantiene l'ampiezza adattiva */
+    height: auto; /* Mantiene l'altezza adattiva */
+}
+
 </style>
 
     <section class="hero" style="background-image: url('images/bg_3.jpg');">
@@ -125,9 +133,9 @@ $id_utente = $_SESSION['id_utente'];
     		<div class="row no-gutters d-flex">
 			<?php
                         foreach ($aPRODOTTI as $row) {
-                            echo '<div class="col-lg-4 d-flex ftco-animate">
+                            echo '<div class="col-lg-4 d-flex ftco-animate mb-5">
                                 <div class="services-wrap d-flex" >
-                                    <a href="#" class="img" style="background-image: url(images/pizza-1.jpg);"></a>
+                                    <a class="img" style="background-image: url(images/pizza-1.jpg);"></a>
                                     <div class="text p-4">
                                         <h3>' . $row['titolo'] . '</h3>
                                         <p>' . $row['descrizione'] . '</p>
@@ -179,72 +187,72 @@ $id_utente = $_SESSION['id_utente'];
 
 
 <footer class="ftco-footer ftco-section img">
-    <div class="overlay"></div>
-    <div class="container">
-        <div class="row mb-5">
-        <div class="col-lg-4 col-md-6 mb-5">
-                <div class="ftco-footer-widget mb-4">
-                    <h2 class="ftco-heading-2">Recapiti</h2>
-                    <div class="block-23 mb-3">
-                        <ul>
-                            <li><span class="icon icon-map-marker"></span><span class="text">Via Madonna delle carceri 4, Camerino, MC 62032</span></li>
-                            <li><a href="#"><span class="icon icon-phone"></span><span class="text">+39 3295695194</span></a></li>
-                            <li><a href="#"><span class="icon icon-envelope"></span><span class="text">esempio@mail.com</span></a></li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-lg-4 col-md-6 mb-5">
-                <div class="ftco-footer-widget mb-4 ml-md-4">
-                    <h2 class="ftco-heading-2">Pagine</h2>
-                    <ul class="list-unstyled">
-                        <li><a href="#" class="py-2 d-block">Home</a></li>
-                        <li><a href="#" class="py-2 d-block">Menu</a></li>
-                        <li><a href="#" class="py-2 d-block">Blog</a></li>
-                        <li><a href="#" class="py-2 d-block">Contatti</a></li>
+      <div class="overlay"></div>
+      <div class="container">
+          <div class="row mb-5">
+          <div class="col-lg-4 col-md-6 mb-5">
+                  <div class="ftco-footer-widget mb-4">
+                      <h2 class="ftco-heading-2">Recapiti</h2>
+                      <div class="block-23 mb-3">
+                          <ul>
+                              <li><span class="icon icon-map-marker"></span><span class="text">Via Madonna delle carceri 4, Camerino, MC 62032</span></li>
+                              <li><span class="icon icon-phone"></span><span class="text">+39 3295695194</span></li>
+                              <li><span class="icon icon-envelope"></span><span class="text">esempio@mail.com</span></li>
+                          </ul>
+                      </div>
+                  </div>
+              </div>
+  
+              <div class="col-lg-4 col-md-6 mb-5">
+                  <div class="ftco-footer-widget mb-4 ml-md-4">
+                      <h2 class="ftco-heading-2">Pagine</h2>
+                      <ul class="list-unstyled">
+                        <li><a href="home.html" class="py-2 d-block">Home</a></li>
+                        <li><a href="menu.php" class="py-2 d-block">Menu</a></li>
+                        <li><a href="blog.html" class="py-2 d-block">Blog</a></li>
+                        <li><a href="contatti.html" class="py-2 d-block">Contatti</a></li>
                     </ul>
-                </div>
-            </div>
-
-            <div class="col-lg-4 col-md-6 mb-5">
-                <div class="ftco-footer-widget mb-4">
-                    <h2 class="ftco-heading-2">Recent Blog</h2>
-                    <div class="block-21 mb-4 d-flex">
-                        <a class="blog-img mr-4" style="background-image: url(images/image_1.jpg);"></a>
-                        <div class="text">
-                            <h3 class="heading"><a href="#">Even the all-powerful Pointing has no control about</a></h3>
-                            <div class="meta">
-                                <div><a href="#"><span class="icon-calendar"></span> Sept 15, 2018</a></div>
-                                <div><a href="#"><span class="icon-person"></span> Admin</a></div>
-                                <div><a href="#"><span class="icon-chat"></span> 19</a></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="block-21 mb-4 d-flex">
-                        <a class="blog-img mr-4" style="background-image: url(images/image_2.jpg);"></a>
-                        <div class="text">
-                            <h3 class="heading"><a href="#">Even the all-powerful Pointing has no control about</a></h3>
-                            <div class="meta">
-                                <div><a href="#"><span class="icon-calendar"></span> Sept 15, 2018</a></div>
-                                <div><a href="#"><span class="icon-person"></span> Admin</a></div>
-                                <div><a href="#"><span class="icon-chat"></span> 19</a></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-        <div class="row">
-            <div class="col-md-12 text-center">
-                <p>
-                    Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved
-                </p>
-            </div>
-        </div>
-    </div>
-</footer>
+                  </div>
+              </div>
+  
+              <div class="col-lg-4 col-md-6 mb-5">
+                  <div class="ftco-footer-widget mb-4">
+                      <h2 class="ftco-heading-2">Recent Blog</h2>
+                      <div class="block-21 mb-4 d-flex">
+                          <a class="blog-img mr-4" style="background-image: url(images/image_1.jpg);"></a>
+                          <div class="text">
+                              <h3 class="heading"><a href="#">Even the all-powerful Pointing has no control about</a></h3>
+                              <div class="meta">
+                                  <div><span class="icon-calendar"></span> Sept 15, 2018</div>
+                                  <div><span class="icon-person"></span> Admin</div>
+                                  <div><span class="icon-chat"></span> 19</div>
+                              </div>
+                          </div>
+                      </div>
+                      <div class="block-21 mb-4 d-flex">
+                          <a class="blog-img mr-4" style="background-image: url(images/image_2.jpg);"></a>
+                          <div class="text">
+                              <h3 class="heading"><a href="#">Even the all-powerful Pointing has no control about</a></h3>
+                              <div class="meta">
+                                  <div><span class="icon-calendar"></span> Sept 15, 2018</div>
+                                  <div><span class="icon-person"></span> Admin</div>
+                                  <div><span class="icon-chat"></span> 19</div>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+  
+          </div>
+          <div class="row">
+              <div class="col-md-12 text-center">
+                  <p>
+                      Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved
+                  </p>
+              </div>
+          </div>
+      </div>
+  </footer>
 
     
   
