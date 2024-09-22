@@ -121,26 +121,17 @@ $id_utente = $_SESSION['id_utente'];
 
 </style>
 
-    <section class="hero" style="background-image: url('images/bg_3.jpg');">
-    <div class="overlay"></div>
-    <div class="container h-100 d-flex justify-content-center align-items-center">
-        <div class="row text-center">
-            <div class="col-md-7">
-                <h1 class="mb-3 bread">Menu</h1>
-            </div>
-        </div>
-    </div>
-</section>
+
     
-		<section class="ftco-section">
+<section class="ftco-section">
     	<div class="container">
     		<div class="row justify-content-center mb-4">
-          <div class="col-md-7 heading-section ftco-animate text-center">
+            <div class="col-md-7 heading-section ftco-animate text-center">
             <h2 class="mb-4">Il nostro menu</h2>
 			<p class="flip"><span class="deg1"></span><span class="deg2"></span><span class="deg3"></span></p>
             <p style="margin-top: 40px;">Scopri le nostre specialità, preparate con ingredienti freschi e genuini.</p>
-          </div>
-        </div>
+            </div>
+            </div>
     	</div>
 
 <div class="text-center mb-5">
