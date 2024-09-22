@@ -134,7 +134,7 @@ $id_utente = $_SESSION['id_utente'];
             </div>
     	</div>
 
-<div class="text-center mb-5">
+<div class="text-center mb-5 ftco-animate">
     <button class="btn btn-primary category-btn" data-category="Tutte">Tutte</button>
     <button class="btn btn-primary category-btn" data-category="Pizza">Pizza</button>
     <button class="btn btn-primary category-btn" data-category="Hamburger">Hamburger</button>
