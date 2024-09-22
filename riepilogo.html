@@ -130,29 +130,72 @@ input.form-control:focus, textarea.form-control:focus, select.form-control:focus
                         </select>
                     </div>
                 </div>
-
                 <!-- Step 4: Riepilogo dell'ordine e riepilogo delle informazioni inserite -->
                 <div class="step">
                     <h2 class="mb-4">Riepilogo ordine</h2>
-                    <div class="form-group">
-
-                        <div id="riepilogoOrdine">
-                            <!-- I dettagli dell'ordine verranno aggiunti dinamicamente qui -->
-                            <p id="ordineVuoto">Caricamento dei dettagli dell'ordine...</p>
+                    
+                    <!-- Card Riepilogo Ordine -->
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <h4>Riepilogo Ordine</h4>
                         </div>
-                        <p><strong>Totale:</strong> <span id="riepilogoTotale">€0.00</span></p>
+                        <div class="card-body">
+                            <table class="table table-striped" id="riepilogoOrdineTable">
+                                <thead>
+                                    <tr>
+                                        <th>Prodotto</th>
+                                        <th>Quantità</th>
+                                        <th>Subtotale</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="ordineTableBody">
+                                    <tr>
+                                        <td colspan="3" id="ordineVuoto">Caricamento dei dettagli dell'ordine...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <p><strong>Totale:</strong> <span id="riepilogoTotale">€0.00</span></p>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <!-- Riepilogo Informazioni inserite -->
-                        <h4 class="mt-2 mb-2">Riepilogo Informazioni</h4>
-                        <p><strong>Modalità di consegna:</strong> <span id="summaryDelivery"></span></p>
-                        <p><strong>Nome e Cognome:</strong> <span id="summaryName"></span></p>
-                        <p><strong>Indirizzo:</strong> <span id="summaryAddress"></span></p>
-                        <p><strong>Numero di telefono:</strong> <span id="summaryPhone"></span></p>
-                        <p><strong>Email:</strong> <span id="summaryEmail"></span></p>
-                        <p><strong>Orario:</strong> <span id="summaryTime"></span></p>
+
+                    <!-- Card Riepilogo Informazioni -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h4>Riepilogo Informazioni</h4>
+                        </div>
+                        <div class="card-body">
+                            <table class="table table-striped">
+                                <tbody id="riepilogoInfoTable">
+                                    <tr>
+                                        <th>Modalità di consegna</th>
+                                        <td id="summaryDelivery"></td>
+                                    </tr>
+                                    <tr>
+                                        <th>Nome e Cognome</th>
+                                        <td id="summaryName"></td>
+                                    </tr>
+                                    <tr>
+                                        <th>Indirizzo</th>
+                                        <td id="summaryAddress"></td>
+                                    </tr>
+                                    <tr>
+                                        <th>Numero di telefono</th>
+                                        <td id="summaryPhone"></td>
+                                    </tr>
+                                    <tr>
+                                        <th>Email</th>
+                                        <td id="summaryEmail"></td>
+                                    </tr>
+                                    <tr>
+                                        <th>Orario</th>
+                                        <td id="summaryTime"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
-                    <div class="form-group">
+
+                    <div class="form-group mt-4">
                         <label for="notes">Note varie:</label>
                         <textarea class="form-control" id="notes" name="notes" rows="3"></textarea>
                     </div>
@@ -246,18 +289,21 @@ input.form-control:focus, textarea.form-control:focus, select.form-control:focus
                 dataType: 'json',
                 success: function (result) {
                     if (result.status === 1) {
-                        document.getElementById("ordineVuoto").style.display = 'none';
-
-                        const riepilogoOrdineDiv = document.getElementById("riepilogoOrdine");
-                        riepilogoOrdineDiv.innerHTML = "";
-
+                        const ordineTableBody = $("#ordineTableBody");
+                        ordineTableBody.empty();
+                        
                         result.data.prodotti.forEach(prodotto => {
-                            const prodottoElement = document.createElement("p");
-                            prodottoElement.innerHTML = `${prodotto.quantita}x ${prodotto.nomeProdotto} - €${prodotto.subtotale.toFixed(2)}`;
-                            riepilogoOrdineDiv.appendChild(prodottoElement);
+                            const prodottoRow = `
+                                <tr>
+                                    <td>${prodotto.nomeProdotto}</td>
+                                    <td>${prodotto.quantita}</td>
+                                    <td>€${prodotto.subtotale.toFixed(2)}</td>
+                                </tr>
+                            `;
+                            ordineTableBody.append(prodottoRow);
                         });
 
-                        document.getElementById("riepilogoTotale").textContent = `€${result.data.totale.toFixed(2)}`;
+                        $("#riepilogoTotale").text(`€${result.data.totale.toFixed(2)}`);
 
                     } else {
                         alert("Errore durante il caricamento del riepilogo.");
@@ -303,7 +349,7 @@ input.form-control:focus, textarea.form-control:focus, select.form-control:focus
                     alert("Ordine completato con successo! Totale: €" + result.data.totale.toFixed(2));
 
                     // Reindirizza alla pagina di conferma/conclusione
-                    window.location.href = 'conclusione.html';
+                    // window.location.href = 'conclusione.html';
                 } else {
                     console.error("Errore nell'elaborazione dell'ordine:", result.message);
                     alert("Si è verificato un errore. Riprova più tardi.");
