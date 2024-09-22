@@ -176,6 +176,91 @@ switch($paction)
         }
     break;
 
+    case "elencoOrdiniConfermati":
+        try {
+            $risultato_ordine = $db->elencoOrdiniConfermati();
+            if ($risultato_ordine['success']) {
+                sendJsonResponse([
+                    'status' => 1,
+                    'message' => 'elencoOrdiniConfermati',
+                    'data' => [
+                        'elencoOrdiniConfermati' => $risultato_ordine['elencoOrdiniConfermati']
+                    ]
+                ]);
+            } else {
+                sendJsonResponse([
+                    'status' => 0,
+                    'message' => 'Errore durante l\'elaborazione dell\'ordine'
+                ]);
+            }
+        } catch (Exception $e) {
+            error_log("Errore nell'ordine: " . $e->getMessage());
+            sendJsonResponse([
+                'status' => 0,
+                'message' => 'Si è verificato un errore inaspettato'
+            ]);
+        }
+    break;
+
+    
+
+    
+    case "visualizzaDettagli":
+        try {
+            $id_carrello = get_param("id_carrello");
+            $risultato_ordine = $db->visualizzaDettagli($id_carrello);
+            
+            if ($risultato_ordine['success']) {
+                sendJsonResponse([
+                    'status' => 1,
+                    'message' => 'Dettagli dell\'ordine recuperati con successo',
+                    'data' => [
+                        'dettaglio' => $risultato_ordine['data'] // Cambiato da 'dettaglio' a 'data'
+                    ]
+                ]);
+            } else {
+                sendJsonResponse([
+                    'status' => 0,
+                    'message' => $risultato_ordine['message'] // Utilizza il messaggio di errore specifico
+                ]);
+            }
+        } catch (Exception $e) {
+            error_log("Errore nell'ordine: " . $e->getMessage());
+            sendJsonResponse([
+                'status' => 0,
+                'message' => 'Si è verificato un errore inaspettato'
+            ]);
+        }
+    break;
+
+    case "visualizzaDettagliConfermato":
+        try {
+            $id_carrello = get_param("id_carrello");
+            $risultato_ordine = $db->visualizzaDettagliConfermato($id_carrello);
+            
+            if ($risultato_ordine['success']) {
+                sendJsonResponse([
+                    'status' => 1,
+                    'message' => 'Dettagli dell\'ordine recuperati con successo',
+                    'data' => [
+                        'dettaglio' => $risultato_ordine['data'] // Cambiato da 'dettaglio' a 'data'
+                    ]
+                ]);
+            } else {
+                sendJsonResponse([
+                    'status' => 0,
+                    'message' => $risultato_ordine['message'] // Utilizza il messaggio di errore specifico
+                ]);
+            }
+        } catch (Exception $e) {
+            error_log("Errore nell'ordine: " . $e->getMessage());
+            sendJsonResponse([
+                'status' => 0,
+                'message' => 'Si è verificato un errore inaspettato'
+            ]);
+        }
+    break;
+    
     
 }   
 ?>

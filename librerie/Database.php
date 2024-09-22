@@ -407,7 +407,7 @@ class Database {
         foreach ($ordini as $item) {
             if (is_array($item)) {
                 $elencoOrdini[] = [
-                    'id_carrello ' => $item['id_carrello '],
+                    'id_carrello' => $item['id_carrello'],
                     'nome' => $item['nome'],
                     'cognome' => $item['cognome'],
                     'email' => $item['email'],
@@ -424,7 +424,105 @@ class Database {
             'elencoOrdini' => $elencoOrdini
         ];
     }
+    
 
+    public function elencoOrdiniConfermati() {
+        
+        $ordini = get_data("SELECT  * 
+        FROM carrello
+        INNER JOIN utente_carrello ON carrello.id_carrello = utente_carrello.id_carrello
+        INNER JOIN carrello_dettaglio ON carrello.id_carrello = carrello_dettaglio.id_carrello
+        WHERE carrello.flag_conferma =1 
+          AND carrello.flag_ordinato IS NOT NULL;");
+
+        $elencoOrdini = [];
+        
+        foreach ($ordini as $item) {
+            if (is_array($item)) {
+                $elencoOrdini[] = [
+                    'id_carrello' => $item['id_carrello'],
+                    'nome' => $item['nome'],
+                    'cognome' => $item['cognome'],
+                    'email' => $item['email'],
+                    'flag_confermato' => $item['flag_confermato']
+                ];
+            } else {
+                error_log("Elemento non valido nell'ordine: " . print_r($item, true));
+            }
+        }
+        
+    
+        return [
+            'success' => TRUE,
+            'elencoOrdiniConfermati' => $elencoOrdini
+        ];
+    }
+    
+    public function visualizzaDettagli($id_carrello) {
+        $ordine = get_data("SELECT * 
+        FROM carrello
+        INNER JOIN utente_carrello ON carrello.id_carrello = utente_carrello.id_carrello
+        INNER JOIN carrello_dettaglio ON carrello.id_carrello = carrello_dettaglio.id_carrello
+        WHERE carrello.flag_conferma IS NULL 
+          AND carrello.flag_ordinato IS NOT NULL
+          AND carrello.id_carrello='$id_carrello';");
+    
+        // Controlla se l'ordine esiste
+        if (!empty($ordine) && is_array($ordine[0])) {
+            $item = $ordine[0]; // Prendi il primo (e unico) elemento
+    
+            return [
+                'success' => true,
+                'data' => [
+                    'id_carrello' => $item['id_carrello'],
+                    'nome' => $item['nome'],
+                    'cognome' => $item['cognome'],
+                    'email' => $item['email'],
+                    'flag_confermato' => $item['flag_confermato']
+                    // Aggiungi altri campi se necessario
+                ]
+            ];
+        } else {
+            return [
+                'success' => false,
+                'message' => 'Ordine non trovato.'
+            ];
+        }
+    }
+
+    
+    public function visualizzaDettagliConfermato($id_carrello) {
+        $ordine = get_data("SELECT * 
+        FROM carrello
+        INNER JOIN utente_carrello ON carrello.id_carrello = utente_carrello.id_carrello
+        INNER JOIN carrello_dettaglio ON carrello.id_carrello = carrello_dettaglio.id_carrello
+        WHERE carrello.flag_conferma =1 
+          AND carrello.flag_ordinato IS NOT NULL
+          AND carrello.id_carrello='$id_carrello';");
+    
+        // Controlla se l'ordine esiste
+        if (!empty($ordine) && is_array($ordine[0])) {
+            $item = $ordine[0]; // Prendi il primo (e unico) elemento
+    
+            return [
+                'success' => true,
+                'data' => [
+                    'id_carrello' => $item['id_carrello'],
+                    'nome' => $item['nome'],
+                    'cognome' => $item['cognome'],
+                    'email' => $item['email'],
+                    'flag_confermato' => $item['flag_confermato']
+                    // Aggiungi altri campi se necessario
+                ]
+            ];
+        } else {
+            return [
+                'success' => false,
+                'message' => 'Ordine non trovato.'
+            ];
+        }
+    }
+    
     private function inviaEmailOrdine($nome, $cognome, $indirizzo, $telefono, $email, $orarioConsegna, $note, $deliveryType, $prodotti_ordinati, $totale) {
         require 'PHPMailer/src/Exception.php';
         require 'PHPMailer/src/PHPMailer.php';
