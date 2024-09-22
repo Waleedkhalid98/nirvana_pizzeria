@@ -29,6 +29,8 @@ $id_utente = $_SESSION['id_utente'];
     <title>Menu</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    
     
     <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Josefin+Sans" rel="stylesheet">
@@ -51,6 +53,7 @@ $id_utente = $_SESSION['id_utente'];
 
     <link rel="stylesheet" href="css/bootstrap-datepicker.css">
     <link rel="stylesheet" href="css/jquery.timepicker.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     
     <link rel="stylesheet" href="css/flaticon.css">
@@ -76,15 +79,15 @@ $id_utente = $_SESSION['id_utente'];
 	  </nav>
     <!-- END nav -->
 
-    <style>
+<style>
     .hero {
     position: relative;
     height: 50vh; /* Altezza metà pagina */
     background-size: cover;
     background-position: center;
-}
+    }
 
-.overlay {
+    .overlay {
     position: absolute;
     top: 0;
     left: 0;
@@ -92,19 +95,25 @@ $id_utente = $_SESSION['id_utente'];
     bottom: 0;
     background: rgba(0, 0, 0, 0.5); /* Overlay scuro con opacità */
     z-index: 0; /* Posizionamento dell'overlay sopra l'immagine */
-}
+    }
 
-.hero .container {
+    .hero .container {
     position: relative;
     z-index: 0; /* Contenuto sopra l'overlay */
-}
+    }
 
-#btnCarrello {
+    #btnCarrello {
     font-size: 14px;
     padding: 8px 12px;
     width: auto; /* Mantiene l'ampiezza adattiva */
     height: auto; /* Mantiene l'altezza adattiva */
-}
+        }
+
+    .category-btn.active {
+    background-color: #f96d00;
+    color: white;
+    }
+
 
 </style>
 
@@ -121,35 +130,46 @@ $id_utente = $_SESSION['id_utente'];
     
 		<section class="ftco-section">
     	<div class="container">
-    		<div class="row justify-content-center mb-5 pb-3">
+    		<div class="row justify-content-center mb-4">
           <div class="col-md-7 heading-section ftco-animate text-center">
-            <h2 class="mb-4">Our Menu</h2>
+            <h2 class="mb-4">Il nostro menu</h2>
 			<p class="flip"><span class="deg1"></span><span class="deg2"></span><span class="deg3"></span></p>
-            <p style="margin-top: 40px;">Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts.</p>
+            <p style="margin-top: 40px;">Scopri le nostre specialità, preparate con ingredienti freschi e genuini.</p>
           </div>
         </div>
     	</div>
-    	<div class="container-wrap">
-    		<div class="row no-gutters d-flex">
-			<?php
-                        foreach ($aPRODOTTI as $row) {
-                            echo '<div class="col-lg-4 d-flex ftco-animate mb-5">
-                                <div class="services-wrap d-flex" >
-                                    <a class="img" style="background-image: url(images/pizza-1.jpg);"></a>
-                                    <div class="text p-4">
-                                        <h3>' . $row['titolo'] . '</h3>
-                                        <p>' . $row['descrizione'] . '</p>
-                                        <button href="#" class="ml-2 btn btn-white btn-outline-white" onclick="aggiungiProdotto(' . $row['id'] . ')">Aggiungi al Carrello</button>
-                                    </div>
-                                </div>
-                            </div>';
-                        }
-                        ?>
-    			
-    			</div>
-    		</div>
-    	</div>
 
+<div class="text-center mb-5">
+    <button class="btn btn-primary category-btn" data-category="Tutte">Tutte</button>
+    <button class="btn btn-primary category-btn" data-category="Pizza">Pizza</button>
+    <button class="btn btn-primary category-btn" data-category="Hamburger">Hamburger</button>
+</div>
+
+<div id="menu-container" class="row no-gutters d-flex">
+    <div class="container-wrap">
+        <div class="row no-gutters d-flex">
+            <?php
+            $categoriaFiltrata = isset($_GET['categoria']) ? $_GET['categoria'] : '';
+
+            foreach ($aPRODOTTI as $row) {
+                // Filtra i prodotti in base alla categoria
+                if ($categoriaFiltrata === '' || $row['categoria'] === $categoriaFiltrata || $categoriaFiltrata === 'Tutte') {
+                    echo '<div class="col-lg-4 d-flex ftco-animate mb-5 product-card" data-category="' . htmlspecialchars($row['categoria']) . '">
+                            <div class="services-wrap d-flex">
+                                <a class="img" style="background-image: url(images/pizza-1.jpg);"></a>
+                                <div class="text p-4">
+                                    <h3>' . htmlspecialchars($row['titolo']) . '</h3>
+                                    <p>' . htmlspecialchars($row['descrizione']) . '</p>
+                                    <button class="ml-2 btn btn-white btn-outline-white" onclick="aggiungiProdotto(' . $row['id'] . ')">Aggiungi al Carrello</button>
+                                </div>
+                            </div>
+                          </div>';
+                }
+            }
+            ?>
+        </div>
+    </div>
+</div>
       
 
     </section>
@@ -284,6 +304,21 @@ $id_utente = $_SESSION['id_utente'];
 
 
 <script>
+
+
+    // Funzione per gestire il filtraggio delle categorie
+    document.querySelectorAll('.category-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const categoria = this.getAttribute('data-category');
+            const url = new URL(window.location.href);
+            url.searchParams.set('categoria', categoria === 'Tutte' ? '' : categoria);
+            window.location.href = url.toString();
+        });
+    });
+
+
+
+
     $(document).ready(function() {
         // Qui puoi chiamare il tuo metodo
         riempiCarrello(); // Ad esempio, chiama la funzione per riempire il carrello
