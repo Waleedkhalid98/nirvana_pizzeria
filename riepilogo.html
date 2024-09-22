@@ -9,7 +9,34 @@
     <link rel="stylesheet" href="css/style.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
+    <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Josefin+Sans" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Nothing+You+Could+Do" rel="stylesheet">
+
+    <link rel="stylesheet" href="css/open-iconic-bootstrap.min.css">
+    <link rel="stylesheet" href="css/animate.css">
+    
+    <link rel="stylesheet" href="css/owl.carousel.min.css">
+    <link rel="stylesheet" href="css/owl.theme.default.min.css">
+    <link rel="stylesheet" href="css/magnific-popup.css">
+
+    <link rel="stylesheet" href="css/aos.css">
+
+    <link rel="stylesheet" href="css/ionicons.min.css">
+
+    <link rel="stylesheet" href="css/bootstrap-datepicker.css">
+    <link rel="stylesheet" href="css/jquery.timepicker.css">
+
+    
+    <link rel="stylesheet" href="css/flaticon.css">
+    <link rel="stylesheet" href="css/icomoon.css">
+    <link rel="stylesheet" href="css/style.css">
+
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
     <style>
+
+
         .step {
             display: none;
         }
@@ -31,30 +58,70 @@
         .form-control.is-invalid {
             border-color: red;
         }
-        * {
+        
+/* Applica il colore nero a tutti gli elementi tranne quelli nella navbar */
+*:not(.navbar *, .navbar, footer *, footer) {
     color: #000 !important;
 }
+
+footer .meta div {
+    color: #fff !important; /* Imposta il colore del testo a bianco */
+}
+
+
+
 /* Sovrascrivi il colore del testo e del background per i textarea con la classe form-control */
-.form-group textarea.form-control, select.form-control {
+textarea.form-control, select.form-control {
     color: #000 !important;
     background-color: #fff !important;
 }
 
-/* Anche i placeholder del textarea */
 textarea.form-control::placeholder, select.form-control::placeholder {
     color: #000 !important;
     opacity: 1;
 }
 
-
 input.form-control, textarea.form-control, select.form-control {
-    border: 1px solid #000 !important; /* Forza il bordo nero */
-    color: #000 !important; /* Assicurati che il testo sia nero */
+    border: 1px solid #000 !important;
+    color: #000 !important;
 }
 
 input.form-control:focus, textarea.form-control:focus, select.form-control:focus {
-    border-color: #000 !important; /* Forza il bordo nero anche quando è in focus */
-    box-shadow: none !important; /* Rimuovi eventuali ombre predefinite */
+    border-color: #000 !important;
+    box-shadow: none !important;
+}
+
+.deliveryOption {
+    margin: 10px;
+    font-size: 18px;
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border: 2px solid #FAC564 !important; /* Colore del bordo */
+    background-color: transparent;
+    transition: background-color 0.3s ease, color 0.3s ease; /* Transizione per un effetto più fluido */
+}
+
+.deliveryOption span {
+    margin-right: 10px;
+    font-size: 24px;
+}
+
+.deliveryOption input {
+    display: none;
+}
+
+.deliveryOption.active {
+    background-color: #FAC564 !important; /* Colore di sfondo quando è attivo */
+    color: white; /* Colore del testo quando è attivo */
+    border-color: #FAC564 !important; /* Mantiene il bordo anche quando attivo */
+}
+
+.deliveryOption:hover {
+    background-color: #FAC564 !important; /* Colore di sfondo al passaggio del mouse */
+    color: white; /* Colore del testo al passaggio del mouse */
 }
 
 
@@ -62,23 +129,47 @@ input.form-control:focus, textarea.form-control:focus, select.form-control:focus
 </head>
 <body>
 
-    <div class="container mt-5 text-white-custom">
+    <nav class="navbar navbar-expand-lg navbar-dark ftco_navbar bg-dark ftco-navbar-light" id="ftco-navbar">
+	    <div class="container">
+	      <a class="navbar-brand" href="index.html"><span class="flaticon-pizza-1 mr-1"></span>Nirvana<br><small>Pub Pizzeria</small></a>
+	      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#ftco-nav" aria-controls="ftco-nav" aria-expanded="false" aria-label="Toggle navigation">
+	        <span class="oi oi-menu"></span> 
+	      </button>
+	      <div class="collapse navbar-collapse" id="ftco-nav">
+	        <ul class="navbar-nav ml-auto">
+	          <li class="nav-item"><a href="index.html" class="nav-link">Home</a></li>
+	          <li class="nav-item"><a href="menu.php" class="nav-link">Menu</a></li>
+	          <li class="nav-item"><a href="blog.html" class="nav-link">Blog</a></li>
+	          <li class="nav-item"><a href="contatti.html" class="nav-link">Contatti</a></li>
+	        </ul>
+	      </div>
+		  </div>
+	  </nav>
+
+    <div class="container mt-5 mb-5 text-white-custom">
         <div class="form-container text-center">
             <h1 class="mb-4">Completa il tuo ordine</h1>
 
+            <hr>
+
             <form id="orderForm" onsubmit="return false;">
-                <!-- Step 1: Scelta tra Delivery o Asporto -->
+
+                <!-- Step 1: Scelta tra Delivery o Asporto con bottoni e icone -->
                 <div class="step active">
                     <h2 class="mb-4">Modalità di consegna</h2>
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" name="deliveryType" value="Delivery" id="delivery" required>
-                        <label class="form-check-label" for="delivery">Delivery</label>
-                    </div>
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" name="deliveryType" value="Asporto" id="asporto" required>
-                        <label class="form-check-label" for="asporto">Asporto</label>
+                    <div class="btn-group-toggle" data-toggle="buttons">
+                        <label class="btn btn-outline-primary deliveryOption" id="deliveryButton">
+                            <input type="radio" name="deliveryType" value="Delivery" required autocomplete="off">
+                            <span class="fas fa-bicycle"></span> Delivery
+                        </label>
+                        <label class="btn btn-outline-primary deliveryOption" id="asportoButton">
+                            <input type="radio" name="deliveryType" value="Asporto" required autocomplete="off">
+                            <span class="fas fa-pizza-slice"></span> Asporto
+                        </label>
                     </div>
                 </div>
+
+
 
                 <!-- Step 2: Nome, Cognome, Indirizzo, Telefono, Email -->
                 <div class="step">
@@ -210,7 +301,87 @@ input.form-control:focus, textarea.form-control:focus, select.form-control:focus
         </div>
     </div>
 
+    <footer class="ftco-footer ftco-section img">
+		<div class="overlay"></div>
+		<div class="container">
+			<div class="row mb-5">
+			<div class="col-lg-4 col-md-6 mb-5">
+					<div class="ftco-footer-widget mb-4">
+						<h2 class="ftco-heading-2">Recapiti</h2>
+						<div class="block-23 mb-3">
+							<ul>
+								<li><span class="icon icon-map-marker"></span><span class="text">Via Madonna delle carceri 4, Camerino, MC 62032</span></li>
+								<li><span class="icon icon-phone"></span><span class="text">+39 3295695194</span></li>
+								<li><span class="icon icon-envelope"></span><span class="text">esempio@mail.com</span></li>
+							</ul>
+						</div>
+					</div>
+				</div>
+	
+				<div class="col-lg-4 col-md-6 mb-5">
+					<div class="ftco-footer-widget mb-4 ml-md-4">
+						<h2 class="ftco-heading-2">Pagine</h2>
+						<ul class="list-unstyled">
+						  <li><a href="home.html" class="py-2 d-block">Home</a></li>
+						  <li><a href="menu.php" class="py-2 d-block">Menu</a></li>
+						  <li><a href="blog.html" class="py-2 d-block">Blog</a></li>
+						  <li><a href="contatti.html" class="py-2 d-block">Contatti</a></li>
+					  </ul>
+					</div>
+				</div>
+	
+				<div class="col-lg-4 col-md-6 mb-5">
+					<div class="ftco-footer-widget mb-4">
+						<h2 class="ftco-heading-2">Recent Blog</h2>
+						<div class="block-21 mb-4 d-flex">
+							<a class="blog-img mr-4" style="background-image: url(images/image_1.jpg);"></a>
+							<div class="text">
+								<h3 class="heading"><a href="#">Even the all-powerful Pointing has no control about</a></h3>
+								<div class="meta">
+									<div><span class="icon-calendar"></span> Sept 15, 2018</div>
+									<div><span class="icon-person"></span> Admin</div>
+									<div><span class="icon-chat"></span> 19</div>
+								</div>
+							</div>
+						</div>
+						<div class="block-21 mb-4 d-flex">
+							<a class="blog-img mr-4" style="background-image: url(images/image_2.jpg);"></a>
+							<div class="text">
+								<h3 class="heading"><a href="#">Even the all-powerful Pointing has no control about</a></h3>
+								<div class="meta">
+									<div><span class="icon-calendar"></span> Sept 15, 2018</div>
+									<div><span class="icon-person"></span> Admin</div>
+									<div><span class="icon-chat"></span> 19</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+	
+			</div>
+			<div class="row">
+				<div class="col-md-12 text-center">
+					<p>
+						Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved
+					</p>
+				</div>
+			</div>
+		</div>
+	</footer>
+
     <script>
+
+$(document).ready(function() {
+    // Quando un bottone viene cliccato
+    $(".deliveryOption").click(function() {
+        // Rimuovi la classe 'active' da tutti i bottoni
+        $(".deliveryOption").removeClass("active");
+        // Aggiungi la classe 'active' al bottone cliccato
+        $(this).addClass("active");
+    });
+});
+
+
         let currentStep = 0; 
         showStep(currentStep);
 
@@ -254,23 +425,40 @@ input.form-control:focus, textarea.form-control:focus, select.form-control:focus
 
             showStep(currentStep);
         }
-
         function validateStep() {
-            const steps = document.getElementsByClassName("step");
-            const inputs = steps[currentStep].querySelectorAll("input, select");
-            let valid = true;
+    const steps = document.getElementsByClassName("step");
+    const inputs = steps[currentStep].querySelectorAll("input, select");
+    let valid = true;
 
-            inputs.forEach(input => {
-                if (!input.checkValidity()) {
-                    input.classList.add("is-invalid");
-                    valid = false;
-                } else {
-                    input.classList.remove("is-invalid");
-                }
-            });
-
-            return valid;
+    inputs.forEach(input => {
+        if (!input.checkValidity()) {
+            input.classList.add("is-invalid");
+            valid = false;
+        } else {
+            input.classList.remove("is-invalid");
         }
+    });
+
+    // Verifica che una modalità di consegna sia stata selezionata
+    const deliveryType = document.querySelector('input[name="deliveryType"]:checked');
+    if (!deliveryType) {
+        alert('Seleziona una modalità di consegna.');
+        valid = false;
+    }
+
+    return valid;
+}
+
+// Aggiungi evento per gestire i pulsanti di toggle per la modalità di consegna
+document.querySelectorAll('.btn-group-toggle label').forEach(label => {
+    label.addEventListener('click', function() {
+        // Rimuovi la classe 'active' dagli altri pulsanti
+        document.querySelectorAll('.btn-group-toggle label').forEach(l => l.classList.remove('active'));
+        // Aggiungi la classe 'active' al pulsante cliccato
+        label.classList.add('active');
+    });
+});
+
 
         function updateSummary() {
             const deliveryType = document.querySelector('input[name="deliveryType"]:checked');

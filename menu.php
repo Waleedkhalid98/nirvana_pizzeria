@@ -109,10 +109,20 @@ $id_utente = $_SESSION['id_utente'];
     height: auto; /* Mantiene l'altezza adattiva */
         }
 
-    .category-btn.active {
-    background-color: #f96d00;
-    color: white;
-    }
+        .category-btn.active {
+    background-color: #f0a600 !important; /* Colore di sfondo */
+    color: white; /* Colore del testo */
+    border: 1px solid #f0a600 !important; /* Aggiungi un bordo bianco, se desiderato */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Ombra per effetto di profondità */
+    transition: all 0.3s; /* Transizione fluida */
+}
+
+.category-btn:hover{
+    background-color: #f0a600 !important; /* Colore di sfondo simile a hover quando attivo */
+    color: #f0a600 !important; /* Colore del testo */
+}
+
+
 
     .category-btn {
         font-size: 16px; /* Cambia la dimensione del font */
@@ -134,11 +144,12 @@ $id_utente = $_SESSION['id_utente'];
             </div>
     	</div>
 
-<div class="text-center mb-5 ftco-animate">
-    <button class="btn btn-primary category-btn" data-category="Tutte">Tutte</button>
-    <button class="btn btn-primary category-btn" data-category="Pizza">Pizza</button>
-    <button class="btn btn-primary category-btn" data-category="Hamburger">Hamburger</button>
+        <div class="text-center mb-5 ftco-animate">
+    <button class="btn btn-primary category-btn <?php echo $categoriaFiltrata === '' ? 'active' : ''; ?>" data-category="Tutte">Tutte</button>
+    <button class="btn btn-primary category-btn <?php echo $categoriaFiltrata === 'Pizza' ? 'active' : ''; ?>" data-category="Pizza">Pizza</button>
+    <button class="btn btn-primary category-btn <?php echo $categoriaFiltrata === 'Hamburger' ? 'active' : ''; ?>" data-category="Hamburger">Hamburger</button>
 </div>
+
 
 <div id="menu-container" class="row no-gutters d-flex">
     <div class="container-wrap">
@@ -301,15 +312,26 @@ $id_utente = $_SESSION['id_utente'];
 <script>
 
 
-    // Funzione per gestire il filtraggio delle categorie
-    document.querySelectorAll('.category-btn').forEach(button => {
-        button.addEventListener('click', function() {
-            const categoria = this.getAttribute('data-category');
-            const url = new URL(window.location.href);
-            url.searchParams.set('categoria', categoria === 'Tutte' ? '' : categoria);
-            window.location.href = url.toString();
-        });
+$(document).ready(function() {
+    // Aggiungi la classe 'active' al pulsante attualmente attivo
+    const categoriaAttiva = new URLSearchParams(window.location.search).get('categoria');
+
+    $('.category-btn').each(function() {
+        const categoria = $(this).data('category');
+        if (categoriaAttiva === categoria || (categoriaAttiva === '' && categoria === 'Tutte')) {
+            $(this).addClass('active');
+        }
     });
+
+    // Gestione del filtraggio delle categorie
+    $('.category-btn').on('click', function() {
+        const categoria = $(this).data('category');
+        const url = new URL(window.location.href);
+        url.searchParams.set('categoria', categoria === 'Tutte' ? '' : categoria);
+        window.location.href = url.toString();
+    });
+});
+
 
 
 
