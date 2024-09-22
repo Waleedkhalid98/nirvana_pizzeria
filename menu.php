@@ -114,6 +114,10 @@ $id_utente = $_SESSION['id_utente'];
     color: white;
     }
 
+    .category-btn {
+        font-size: 16px; /* Cambia la dimensione del font */
+        padding: 12px 24px; /* Aumenta il padding per rendere il pulsante più grande */
+    }
 
 </style>
 
