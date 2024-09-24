@@ -119,21 +119,25 @@ $id_utente = $_SESSION['id_utente'];
 
 
     
-		<section class="ftco-section">
-    	<div class="container">
-    		<div class="row justify-content-center mb-4">
-          <div class="col-md-7 heading-section ftco-animate text-center">
+<section class="mt-5">
+<div class="container">
+    <div class="row justify-content-center mb-4">
+        <div class="col-md-7 heading-section ftco-animate text-center">
             <h2 class="mb-4">Il nostro menu</h2>
-			<p class="flip"><span class="deg1"></span><span class="deg2"></span><span class="deg3"></span></p>
+            <p class="flip"><span class="deg1"></span><span class="deg2"></span><span class="deg3"></span></p>
             <p style="margin-top: 40px;">Scopri le nostre specialità, preparate con ingredienti freschi e genuini.</p>
-          </div>
         </div>
-    	</div>
+    </div>
+</div>
 
 <div class="text-center mb-5">
     <button class="btn btn-primary category-btn" data-category="Tutte">Tutte</button>
     <button class="btn btn-primary category-btn" data-category="Pizza">Pizza</button>
     <button class="btn btn-primary category-btn" data-category="Hamburger">Hamburger</button>
+    <button class="btn btn-primary category-btn" data-category="">Piadine</button>
+    <button class="btn btn-primary category-btn" data-category="">Fritti</button>
+    <button class="btn btn-primary category-btn" data-category="">Bibite</button>
+    <button class="btn btn-primary category-btn" data-category="">Dolci</button>
 </div>
 
 <div id="menu-container" class="row no-gutters d-flex">
@@ -165,7 +169,7 @@ $id_utente = $_SESSION['id_utente'];
 </div>
       
 
-    </section>
+</section>
 
 <!-- Bottone per aprire il carrello -->
 <button id="btnCarrello" class="btn btn-primary btn-lg shadow-lg">
@@ -176,7 +180,7 @@ $id_utente = $_SESSION['id_utente'];
 <div id="carrello" class="bg-dark text-light shadow-lg">
     <div class="d-flex justify-content-between align-items-center p-3 border-bottom">
         <h2 class="cart-title m-0">Carrello</h2>
-        <span class="close-cart btn btn-danger btn-sm">&times;</span>
+        <span class="close-cart btn btn-danger btn-sm" style="color: #fac564;" >&times;</span>
     </div>
     <div class="p-3">
         <table class="table table-hover table-borderless text-light" id="cartTable">

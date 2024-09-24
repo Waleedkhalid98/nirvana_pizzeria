@@ -124,11 +124,24 @@ input.form-control:focus, textarea.form-control:focus, select.form-control:focus
     color: white; /* Colore del testo al passaggio del mouse */
 }
 
+#loader {
+            display: none; /* Nascondi il loader di default */
+            position: fixed; /* Posizione fissa */
+            left: 50%; /* Centro orizzontale */
+            top: 50%; /* Centro verticale */
+            transform: translate(-50%, -50%); /* Centra esattamente */
+            z-index: 1050; /* Assicurati che sia sopra altri contenuti */
+        }
 
     </style>
 </head>
 <body>
 
+    <div id="loader">
+        <div class="spinner-border text-primary" role="status">
+            <span class="sr-only">Loading...</span>
+        </div>
+    </div>
     <nav class="navbar navbar-expand-lg navbar-dark ftco_navbar bg-dark ftco-navbar-light" id="ftco-navbar">
 	    <div class="container">
 	      <a class="navbar-brand" href="index.html"><span class="flaticon-pizza-1 mr-1"></span>Nirvana<br><small>Pub Pizzeria</small></a>
@@ -146,6 +159,7 @@ input.form-control:focus, textarea.form-control:focus, select.form-control:focus
 		  </div>
 	  </nav>
 
+      
     <div class="container mt-5 mb-5 text-white-custom">
         <div class="form-container text-center">
             <h1 class="mb-4">Completa il tuo ordine</h1>
@@ -517,6 +531,9 @@ document.querySelectorAll('.btn-group-toggle label').forEach(label => {
         const note = $('#notes').val();
         const deliveryType = $('input[name="deliveryType"]:checked').val();
 
+        // Mostra il loader
+        $("#loader").show();
+
         // Invia la richiesta AJAX con i dati dell'utente
         $.ajax({
             type: "POST",
@@ -534,8 +551,8 @@ document.querySelectorAll('.btn-group-toggle label').forEach(label => {
             },
             success: function(result) {
                 if (result.status === 1) {
-                    alert("Ordine completato con successo! Totale: €" + result.data.totale.toFixed(2));
-
+                    // Mostra il loader
+                    $("#loader").hide();
                     // Reindirizza alla pagina di conferma/conclusione
                     window.location.href = 'conclusione.html';
                 } else {

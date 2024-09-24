@@ -237,7 +237,6 @@ switch($paction)
         try {
             $id_carrello = get_param("id_carrello");
             $risultato_ordine = $db->visualizzaDettagliConfermato($id_carrello);
-            
             if ($risultato_ordine['success']) {
                 sendJsonResponse([
                     'status' => 1,
@@ -250,6 +249,171 @@ switch($paction)
                 sendJsonResponse([
                     'status' => 0,
                     'message' => $risultato_ordine['message'] // Utilizza il messaggio di errore specifico
+                ]);
+            }
+        } catch (Exception $e) {
+            error_log("Errore nell'ordine: " . $e->getMessage());
+            sendJsonResponse([
+                'status' => 0,
+                'message' => 'Si è verificato un errore inaspettato'
+            ]);
+        }
+    break;
+
+
+    case "confermaOrdine":
+        try {
+
+            $id_carrello = get_param("id_carrello");
+            $risultato_ordine = $db->confermaOrdine($id_carrello);
+            
+            if ($risultato_ordine['success']) {
+                sendJsonResponse([
+                    'status' => 1,
+                    'message' => 'Mail inviata',
+                  
+                ]);
+            } else {
+                sendJsonResponse([
+                    'status' => 0,
+                    'message' => $risultato_ordine['message'] // Utilizza il messaggio di errore specifico
+                ]);
+            }
+        } catch (Exception $e) {
+            error_log("Errore nell'ordine: " . $e->getMessage());
+            sendJsonResponse([
+                'status' => 0,
+                'message' => 'Si è verificato un errore inaspettato'
+            ]);
+        }
+    break;
+
+    case "eliminaOrdine":
+        try {
+
+            $id_carrello = get_param("id_carrello");
+            $risultato_ordine = $db->eliminaOrdine($id_carrello);
+            
+            if ($risultato_ordine['success']) {
+                sendJsonResponse([
+                    'status' => 1,
+                    'message' => 'ordine eliminato',
+                  
+                ]);
+            } else {
+                sendJsonResponse([
+                    'status' => 0,
+                    'message' => $risultato_ordine['message'] // Utilizza il messaggio di errore specifico
+                ]);
+            }
+        } catch (Exception $e) {
+            error_log("Errore nell'ordine: " . $e->getMessage());
+            sendJsonResponse([
+                'status' => 0,
+                'message' => 'Si è verificato un errore inaspettato'
+            ]);
+        }
+    break;
+
+
+    case "rifiutaOrdine":
+        try {
+
+            $id_carrello = get_param("id_carrello");
+            $risultato_ordine = $db->rifiutaOrdine($id_carrello);
+            
+            if ($risultato_ordine['success']) {
+                sendJsonResponse([
+                    'status' => 1,
+                    'message' => 'ordine rifiutato',
+                  
+                ]);
+            } else {
+                sendJsonResponse([
+                    'status' => 0,
+                    'message' => $risultato_ordine['message'] // Utilizza il messaggio di errore specifico
+                ]);
+            }
+        } catch (Exception $e) {
+            error_log("Errore nell'ordine: " . $e->getMessage());
+            sendJsonResponse([
+                'status' => 0,
+                'message' => 'Si è verificato un errore inaspettato'
+            ]);
+        }
+    break;
+
+    case "elencoUtenti":
+        try {
+            $risultato_utenti = $db->elencoUtenti();
+            if ($risultato_utenti['success']) {
+                sendJsonResponse([
+                    'status' => 1,
+                    'message' => 'elencoUtenti',
+                    'data' => [
+                        'elencoUtenti' => $risultato_utenti['elencoUtenti']
+                    ]
+                ]);
+            } else {
+                sendJsonResponse([
+                    'status' => 0,
+                    'message' => 'Errore durante l\'elaborazione dell\'ordine'
+                ]);
+            }
+        } catch (Exception $e) {
+            error_log("Errore nell'ordine: " . $e->getMessage());
+            sendJsonResponse([
+                'status' => 0,
+                'message' => 'Si è verificato un errore inaspettato'
+            ]);
+        }
+    break;
+
+    case "numeroConfermare":
+        try {
+            $numeroConfermare = $db->numeroConfermare();
+            $numeroCarrelli = $numeroConfermare['numero'][0]['COUNT(c.id_carrello)'];
+            if ($numeroConfermare['success']) {
+                sendJsonResponse([
+                    'status' => 1,
+                    'message' => 'elencoUtenti',
+                    'data' => [
+                        'numero' => $numeroCarrelli
+                    ]
+                ]);
+            } else {
+                sendJsonResponse([
+                    'status' => 0,
+                    'message' => 'Errore durante l\'elaborazione dell\'ordine'
+                ]);
+            }
+        } catch (Exception $e) {
+            error_log("Errore nell'ordine: " . $e->getMessage());
+            sendJsonResponse([
+                'status' => 0,
+                'message' => 'Si è verificato un errore inaspettato'
+            ]);
+        }
+    break;
+
+    case "verifica":
+        try {
+            $token = get_param("token");
+            echo $token;
+            $id_utente = $db->verifyToken($token);
+            echo $id_utente;
+            if ($id_utente['success']) {
+                sendJsonResponse([
+                    'status' => 1,
+                    'message' => 'elencoUtenti',
+                    'data' => [
+                        'id_utente' => $id_utente['id_utente']
+                    ]
+                ]);
+            } else {
+                sendJsonResponse([
+                    'status' => 0,
+                    'message' => 'Errore durante l\'elaborazione dell\'ordine'
                 ]);
             }
         } catch (Exception $e) {
