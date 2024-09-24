@@ -71,7 +71,7 @@ $id_utente = $_SESSION['id_utente'];
 	        <ul class="navbar-nav ml-auto">
 	          <li class="nav-item"><a href="index.html" class="nav-link">Home</a></li>
 	          <li class="nav-item active"><a href="menu.php" class="nav-link">Menu</a></li>
-	          <li class="nav-item"><a href="blog.html" class="nav-link">Blog</a></li>
+	          <li class="nav-item"><a href="blog.html" class="nav-link">Eventi</a></li>
 	          <li class="nav-item"><a href="contatti.html" class="nav-link">Contatti</a></li>
 	        </ul>
 	      </div>
@@ -109,47 +109,32 @@ $id_utente = $_SESSION['id_utente'];
     height: auto; /* Mantiene l'altezza adattiva */
         }
 
-        .category-btn.active {
-    background-color: #f0a600 !important; /* Colore di sfondo */
-    color: white; /* Colore del testo */
-    border: 1px solid #f0a600 !important; /* Aggiungi un bordo bianco, se desiderato */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Ombra per effetto di profondità */
-    transition: all 0.3s; /* Transizione fluida */
-}
-
-.category-btn:hover{
-    background-color: #f0a600 !important; /* Colore di sfondo simile a hover quando attivo */
-    color: #f0a600 !important; /* Colore del testo */
-}
-
-
-
-    .category-btn {
-        font-size: 16px; /* Cambia la dimensione del font */
-        padding: 12px 24px; /* Aumenta il padding per rendere il pulsante più grande */
+    .category-btn.active {
+    background-color: #f96d00;
+    color: white;
     }
+
 
 </style>
 
 
     
-<section class="ftco-section">
+		<section class="ftco-section">
     	<div class="container">
     		<div class="row justify-content-center mb-4">
-            <div class="col-md-7 heading-section ftco-animate text-center">
+          <div class="col-md-7 heading-section ftco-animate text-center">
             <h2 class="mb-4">Il nostro menu</h2>
 			<p class="flip"><span class="deg1"></span><span class="deg2"></span><span class="deg3"></span></p>
             <p style="margin-top: 40px;">Scopri le nostre specialità, preparate con ingredienti freschi e genuini.</p>
-            </div>
-            </div>
+          </div>
+        </div>
     	</div>
 
-        <div class="text-center mb-5 ftco-animate">
-    <button class="btn btn-primary category-btn <?php echo $categoriaFiltrata === '' ? 'active' : ''; ?>" data-category="Tutte">Tutte</button>
-    <button class="btn btn-primary category-btn <?php echo $categoriaFiltrata === 'Pizza' ? 'active' : ''; ?>" data-category="Pizza">Pizza</button>
-    <button class="btn btn-primary category-btn <?php echo $categoriaFiltrata === 'Hamburger' ? 'active' : ''; ?>" data-category="Hamburger">Hamburger</button>
+<div class="text-center mb-5">
+    <button class="btn btn-primary category-btn" data-category="Tutte">Tutte</button>
+    <button class="btn btn-primary category-btn" data-category="Pizza">Pizza</button>
+    <button class="btn btn-primary category-btn" data-category="Hamburger">Hamburger</button>
 </div>
-
 
 <div id="menu-container" class="row no-gutters d-flex">
     <div class="container-wrap">
@@ -158,11 +143,13 @@ $id_utente = $_SESSION['id_utente'];
             $categoriaFiltrata = isset($_GET['categoria']) ? $_GET['categoria'] : '';
 
             foreach ($aPRODOTTI as $row) {
+                $immagine=$row['immagine'];
+                
                 // Filtra i prodotti in base alla categoria
                 if ($categoriaFiltrata === '' || $row['categoria'] === $categoriaFiltrata || $categoriaFiltrata === 'Tutte') {
                     echo '<div class="col-lg-4 d-flex ftco-animate mb-5 product-card" data-category="' . htmlspecialchars($row['categoria']) . '">
                             <div class="services-wrap d-flex">
-                                <a class="img" style="background-image: url(images/pizza-1.jpg);"></a>
+                                <a class="img" style="background-image: url(images/'.$immagine.');"></a>
                                 <div class="text p-4">
                                     <h3>' . htmlspecialchars($row['titolo']) . '</h3>
                                     <p>' . htmlspecialchars($row['descrizione']) . '</p>
@@ -312,26 +299,15 @@ $id_utente = $_SESSION['id_utente'];
 <script>
 
 
-$(document).ready(function() {
-    // Aggiungi la classe 'active' al pulsante attualmente attivo
-    const categoriaAttiva = new URLSearchParams(window.location.search).get('categoria');
-
-    $('.category-btn').each(function() {
-        const categoria = $(this).data('category');
-        if (categoriaAttiva === categoria || (categoriaAttiva === '' && categoria === 'Tutte')) {
-            $(this).addClass('active');
-        }
+    // Funzione per gestire il filtraggio delle categorie
+    document.querySelectorAll('.category-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const categoria = this.getAttribute('data-category');
+            const url = new URL(window.location.href);
+            url.searchParams.set('categoria', categoria === 'Tutte' ? '' : categoria);
+            window.location.href = url.toString();
+        });
     });
-
-    // Gestione del filtraggio delle categorie
-    $('.category-btn').on('click', function() {
-        const categoria = $(this).data('category');
-        const url = new URL(window.location.href);
-        url.searchParams.set('categoria', categoria === 'Tutte' ? '' : categoria);
-        window.location.href = url.toString();
-    });
-});
-
 
 
 

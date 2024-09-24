@@ -283,7 +283,6 @@ class Database {
 
     public function ordina($nome, $cognome, $indirizzo, $telefono, $email, $orarioConsegna, $note, $deliveryType) {
         $id_carrello = $this->esisteCarrello();
-        
         if ($id_carrello) {
             // Recupera i prodotti nel carrello
             $ordine = get_data("SELECT id_prodottiCarrello, numero_prodotti, prezzo, id_prodotto FROM prodotticarrello WHERE id_carrello='$id_carrello'");
@@ -466,7 +465,31 @@ class Database {
         WHERE carrello.flag_conferma IS NULL 
           AND carrello.flag_ordinato IS NOT NULL
           AND carrello.id_carrello='$id_carrello';");
-    
+
+
+        $prodotti=get_data("SELECT * FROM prodotticarrello WHERE id_carrello='$id_carrello'");
+
+        // Initialize a new array to store processed product data
+        $prodotti_list = [];
+
+        // Process the products and store them in $prodotti_list
+        if (is_array($prodotti)) {
+            foreach ($prodotti as $item) {
+                if (is_array($item)) {
+                    $nomeProdotto = get_db_value("SELECT descrizione FROM prodotto WHERE id='" . $item['id_prodotto'] . "'");
+                    $prodotti_list[] = [
+                        'prezzo' => $item['prezzo'],
+                        'quantita' => $item['numero_prodotti'],
+                        'nomeProdotto' => $nomeProdotto,
+                        // Add other fields if necessary
+                    ];
+                }
+            }
+        }
+
+
+
+
         // Controlla se l'ordine esiste
         if (!empty($ordine) && is_array($ordine[0])) {
             $item = $ordine[0]; // Prendi il primo (e unico) elemento
@@ -478,7 +501,8 @@ class Database {
                     'nome' => $item['nome'],
                     'cognome' => $item['cognome'],
                     'email' => $item['email'],
-                    'flag_confermato' => $item['flag_confermato']
+                    'flag_confermato' => $item['flag_confermato'],
+                    'prodotti' => $prodotti_list
                     // Aggiungi altri campi se necessario
                 ]
             ];

@@ -99,21 +99,10 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="#">Ordini</a>
+                    <a class="nav-link active" aria-current="page" href="ordini.html">Ordini</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Utenti</a>
-                </li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        Dropdown
-                    </a>
-                    <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="#">Ordini</a></li>
-                        <li><a class="dropdown-item" href="#">Utenti</a></li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item" href="#">Configurazioni</a></li>
-                    </ul>
+                    <a class="nav-link" href="utenti.html">Utenti</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link " aria-disabled="true">Configurazioni</a>
@@ -173,42 +162,94 @@
     </div>
 </div>
 
-<!-- Modal per i dettagli dell'ordine -->
+
+<!-- Modal per i dettagli dell'ordine con Accordion -->
 <div class="modal fade" id="modalDettagli" tabindex="-1" aria-labelledby="modalDettagliLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="modalDettagliLabel">Dettagli Ordine</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form id="formDettagli">
-                    <div class="mb-3">
+  <div class="modal-dialog">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h5 class="modal-title" id="modalDettagliLabel">Dettagli Ordine</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form id="formDettagli" class="m-3">
+              
+                <div class="row mb-3">
+                    <!-- Nome -->
+                    <div class="col-md-6">
                         <label for="nome" class="form-label">Nome</label>
                         <input type="text" class="form-control" id="nome" readonly>
                     </div>
-                    <div class="mb-3">
+                    
+                    <!-- Cognome -->
+                    <div class="col-md-6">
                         <label for="cognome" class="form-label">Cognome</label>
                         <input type="text" class="form-control" id="cognome" readonly>
                     </div>
-                    <div class="mb-3">
-                        <label for="email" class="form-label">Email</label>
-                        <input type="email" class="form-control" id="email" readonly>
+                </div>
+                
+                <!-- Indirizzo -->
+                <div class="mb-3">
+                  <label for="indirizzo" class="form-label">Indirizzo</label>
+                  <input type="text" class="form-control" id="indirizzo" readonly>
+              </div>
+                
+                <!-- Accordion per numero e email -->
+                <div class="accordion" id="accordionContactDetails">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingOne">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                                Informazioni di contatto
+                            </button>
+                        </h2>
+                        <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionContactDetails">
+                            <div class="accordion-body">
+                                <!-- Email -->
+                                <div class="mb-3">
+                                    <label for="email" class="form-label">Email</label>
+                                    <input type="email" class="form-control" id="email" readonly>
+                                </div>
+
+                                <!-- Numero -->
+                                <div class="mb-3">
+                                    <label for="numero" class="form-label">Numero</label>
+                                    <input type="text" class="form-control" id="numero" readonly>
+                                </div>
+
+
+                            </div>
+                        </div>
                     </div>
-                    <div class="mb-3">
-                        <label for="stato" class="form-label">Stato</label>
-                        <input type="text" class="form-control" id="stato" readonly>
-                    </div>
-                    <!-- Puoi aggiungere ulteriori campi qui -->
-                </form>
-            </div>
-          
-            <div class="modal-footer">
-              <button type="button" class="btn btn-danger" id="eliminaOrdine">Elimina Ordine</button>
-              <button type="button" class="btn btn-success" id="confermaOrdine">Conferma Ordine</button>
-          </div>
+                </div>
+
+                <!-- Tabella Prodotti -->
+                <div class="mb-3">
+                  <div class="table-responsive">
+                      <table class="table table-bordered">
+                          <thead>
+                              <tr>
+                                  <th>Nome Prodotto</th>
+                                  <th>Quantità</th>
+                                  <th>Prezzo (€)</th>
+                              </tr>
+                          </thead>
+                          <tbody id="tabellaProdotti">
+                              <!-- Le righe dei prodotti verranno aggiunte qui -->
+                          </tbody>
+                      </table>
+                  </div>
+                  <div id="totale" class="text-end" style="font-weight: bold;"></div>
+                </div>
+                
+            </form>
         </div>
-    </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-danger" id="eliminaOrdine">Elimina Ordine</button>
+            <button type="button" class="btn btn-success" id="confermaOrdine">Conferma Ordine</button>
+        </div>
+      </div>
+  </div>
 </div>
 
 
@@ -351,31 +392,65 @@ function elencoOrdiniConfermati() {
 }
 
 function visualizzaDettagli(id_carrello) {
-    $.ajax({
-        type: "POST",
-        url: 'action.php?_action=visualizzaDettagli',
-        data: { id_carrello: id_carrello },
-        dataType: 'json',
-        success: function (result) {
-            if (result.status === 1) {
-                // Popola il modal con i dettagli dell'ordine
-                $("#nome").val(result.data.dettaglio.nome); // Aggiornato per accedere a 'dettaglio'
-                $("#cognome").val(result.data.dettaglio.cognome);
-                $("#email").val(result.data.dettaglio.email);
-                $("#stato").val(result.data.dettaglio.flag_confermato);
-                
-                // Mostra il modal
-                $("#modalDettagli").modal('show');
-            } else {
-                alert("Errore nel recupero dei dettagli dell'ordine: " + result.message);
+  $.ajax({
+    type: "POST",
+    url: 'action.php?_action=visualizzaDettagli',
+    data: { id_carrello: id_carrello },
+    dataType: 'json',
+    success: function (result) {
+        console.log(result);
+        if (result.status === 1) {
+            // Popola il modal con i dettagli dell'ordine
+            $("#nome").val(result.data.dettaglio.nome);
+            $("#cognome").val(result.data.dettaglio.cognome);
+            $("#email").val(result.data.dettaglio.email);
+
+            // Crea una variabile per accumulare il totale
+            let totale = 0; // Variabile per il totale
+
+            // Resetta la tabella dei prodotti
+            $("#tabellaProdotti").empty();
+
+            if (result.data.dettaglio.prodotti.length > 0) {
+                result.data.dettaglio.prodotti.forEach(function(prodotto) {
+                    let prezzoTot = prodotto.prezzo * prodotto.quantita; // Calcola il subtotale
+                    totale += prezzoTot; // Aggiungi al totale
+
+                    // Aggiungi una riga alla tabella
+                    $("#tabellaProdotti").append(`
+                        <tr>
+                            <td>${prodotto.nomeProdotto}</td>
+                            <td>${prodotto.quantita}</td>
+                            <td>${prezzoTot}€</td>
+                        </tr>
+                    `);
+                });
             }
-        },
-        error: function (xhr, status, error) {
-            console.error("Errore nella richiesta AJAX:", status, error);
-            alert("Si è verificato un errore. Riprova più tardi.");
+
+            // Aggiungi una riga per il totale
+            $("#tabellaProdotti").append(`
+                <tr>
+                    <td colspan="2" class="text-end"><strong>Totale:</strong></td>
+                    <td><strong>${totale}€</strong></td>
+                </tr>
+            `);
+
+            // Mostra il modal
+            $("#modalDettagli").modal('show');
+        } else {
+            alert("Errore nel recupero dei dettagli dell'ordine: " + result.message);
         }
-    });
+    },
+    error: function (xhr, status, error) {
+        console.error("Errore nella richiesta AJAX:", status, error);
+        alert("Si è verificato un errore. Riprova più tardi.");
+    }
+});
+
+
 }
+
+
 
 function visualizzaDettagliConfermato(id_carrello) {
     $.ajax({
