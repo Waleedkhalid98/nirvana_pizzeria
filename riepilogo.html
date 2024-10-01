@@ -125,13 +125,83 @@ input.form-control:focus, textarea.form-control:focus, select.form-control:focus
 }
 
 #loader {
-            display: none; /* Nascondi il loader di default */
-            position: fixed; /* Posizione fissa */
-            left: 50%; /* Centro orizzontale */
-            top: 50%; /* Centro verticale */
-            transform: translate(-50%, -50%); /* Centra esattamente */
-            z-index: 1050; /* Assicurati che sia sopra altri contenuti */
-        }
+    display: none; /* Nascondi il loader di default */
+    position: fixed; /* Posizione fissa */
+    left: 50%; /* Centro orizzontale */
+    top: 50%; /* Centro verticale */
+    transform: translate(-50%, -50%); /* Centra esattamente */
+    z-index: 1050; /* Assicurati che sia sopra altri contenuti */
+}
+
+
+input[type=text], select {
+width: 100%;
+padding: 12px 20px;
+margin: 8px 0;
+display: inline-block;
+border: 1px solid #ccc;
+border-radius: 4px;
+box-sizing: border-box;
+}
+
+input[type=tel], select {
+width: 100%;
+padding: 12px 20px;
+margin: 8px 0;
+display: inline-block;
+border: 1px solid #ccc;
+border-radius: 4px;
+box-sizing: border-box;
+}
+
+input[type=email], select {
+width: 100%;
+padding: 12px 20px;
+margin: 8px 0;
+display: inline-block;
+border: 1px solid #ccc;
+border-radius: 4px;
+box-sizing: border-box;
+}
+
+
+
+.paymentOption {
+    margin: 10px;
+    font-size: 18px;
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border: 2px solid #FAC564; /* Stesso colore del bordo */
+    background-color: transparent;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.paymentOption span {
+    margin-right: 10px;
+    font-size: 24px;
+}
+
+.paymentOption input {
+    display: none; /* Nascondi l'input radio */
+}
+
+.paymentOption.active {
+    background-color: #FAC564 !important; /* Colore di sfondo quando è attivo */
+    color: white; /* Colore del testo quando è attivo */
+    border-color: #FAC564 !important; /* Mantiene il bordo anche quando attivo */
+}
+
+.paymentOption:hover {
+    background-color: #FAC564 !important; /* Colore di sfondo al passaggio del mouse */
+    color: white; /* Colore del testo al passaggio del mouse */
+}
+
+
+
+
 
     </style>
 </head>
@@ -161,8 +231,8 @@ input.form-control:focus, textarea.form-control:focus, select.form-control:focus
 
       
     <div class="container mt-5 mb-5 text-white-custom">
-        <div class="form-container text-center">
-            <h1 class="mb-4">Completa il tuo ordine</h1>
+        <div class="form-container  text-center">
+            <h1 class="mb-4 text-center">Completa il tuo ordine</h1>
 
             <hr>
 
@@ -170,7 +240,7 @@ input.form-control:focus, textarea.form-control:focus, select.form-control:focus
 
                 <!-- Step 1: Scelta tra Delivery o Asporto con bottoni e icone -->
                 <div class="step active">
-                    <h2 class="mb-4">Modalità di consegna</h2>
+                    <h2 class="mb-4 text-center">Modalità di consegna</h2>
                     <div class="btn-group-toggle" data-toggle="buttons">
                         <label class="btn btn-outline-primary deliveryOption" id="deliveryButton">
                             <input type="radio" name="deliveryType" value="Delivery" required autocomplete="off">
@@ -187,34 +257,33 @@ input.form-control:focus, textarea.form-control:focus, select.form-control:focus
 
                 <!-- Step 2: Nome, Cognome, Indirizzo, Telefono, Email -->
                 <div class="step">
-                    <h2 class="mb-4">Informazioni personali</h2>
-                    <div class="form-group">
-                        <label for="name">Nome:</label>
-                        <input type="text" class="form-control" id="name" name="name" required>
+                    <h2 class="mb-4 text-center">Informazioni personali</h2>
+                    <div>
+                        <label for="name">Nome</label>
+                        <input type="text" id="name" name="name" placeholder="inserisci.." >
+                    
+                        <label for="surname">Cognome</label>
+                        <input type="text" id="surname" name="surname" placeholder="inserisci.." >
+
+                        <label for="address">Indirizzo</label>
+                        <input type="text" id="address" name="address" placeholder="inseriscio.." >
+
+                        <label for="phone">Numero di telefono</label>
+                        <input type="tel" id="phone" name="phone" placeholder="inserisci.." > 
+                    
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" placeholder="inserisci.." >
+                    
+                    
+                      
                     </div>
-                    <div class="form-group">
-                        <label for="surname">Cognome:</label>
-                        <input type="text" class="form-control" id="surname" name="surname" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="address">Indirizzo:</label>
-                        <input type="text" class="form-control" id="address" name="address" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="phone">Numero di telefono:</label>
-                        <input type="tel" class="form-control" id="phone" name="phone" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="email">Email:</label>
-                        <input type="email" class="form-control" id="email" name="email" required>
-                    </div>
-                </div>
+                  </div>
 
                 <!-- Step 3: Orario di consegna -->
                 <div class="step">
-                    <h2 class="mb-4">Orario di consegna</h2>
+                    <h3 class="mb-4  text-center">Scegli il tuo orario e metodo di pagamento</h3>
                     <div class="form-group">
-                        <label for="time">Orario preferito:</label>
+                        <label for="time">orario preferito:</label>
                         <select class="form-control" id="time" name="time" required>
                             <option value="" disabled selected>Seleziona un orario</option>
                             <!-- Orari a partire dalle 19:30 con intervalli di 15 minuti -->
@@ -234,6 +303,21 @@ input.form-control:focus, textarea.form-control:focus, select.form-control:focus
                             </script>
                         </select>
                     </div>
+
+                    
+                    <label for="time">Scegli il metodo di pagamento:</label>
+                    <div class="btn-group-toggle" data-toggle="buttons">
+                        <label class="btn btn-outline-primary paymentOption" id="cardButton">
+                            <input type="radio" name="paymentType" value="Elettronico" required autocomplete="off">
+                            <span class="fas fa-money-check-alt"></span> Pagamento Elettronico con POS
+                        </label>
+                        <label class="btn btn-outline-primary paymentOption" id="cashButton">
+                            <input type="radio" name="paymentType" value="Contante" required autocomplete="off">
+                            <span class="fas fa-money-bill-wave"></span> Pagamento in Contante
+                        </label>
+                    </div>
+                    
+                    
                 </div>
                 <!-- Step 4: Riepilogo dell'ordine e riepilogo delle informazioni inserite -->
                 <div class="step">
@@ -530,6 +614,7 @@ document.querySelectorAll('.btn-group-toggle label').forEach(label => {
         const orarioConsegna = $('#time').val();
         const note = $('#notes').val();
         const deliveryType = $('input[name="deliveryType"]:checked').val();
+        const paymentType = $('input[name="paymentType"]:checked').val();
 
         // Mostra il loader
         $("#loader").show();

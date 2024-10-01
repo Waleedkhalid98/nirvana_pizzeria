@@ -137,6 +137,7 @@ $id_utente = $_SESSION['id_utente'];
     <button class="btn btn-primary category-btn" data-category="Pizze Bianche">Pizze Bianche</button>
     <button class="btn btn-primary category-btn" data-category="pizze speciali">Pizze speciali</button>
     <button class="btn btn-primary category-btn" data-category="panini">Calzoni/Panini</button>
+    <button class="btn btn-primary category-btn" data-category="Fritti">fritti</button>
     <button class="btn btn-primary category-btn" data-category="piatti unici">Piatti unici</button>
     <button class="btn btn-primary category-btn" data-category="dolci">Dolci</button>
     <button class="btn btn-primary category-btn" data-category="">Bibite</button>
