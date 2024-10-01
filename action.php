@@ -94,7 +94,8 @@ switch($paction)
             $orarioConsegna = get_param("orarioConsegna");
             $note = get_param("note");
             $deliveryType = get_param("deliveryType");
-            $risultato_ordine = $db->ordina($nome, $cognome, $indirizzo, $telefono, $email, $orarioConsegna, $note, $deliveryType);
+            $paymentType = get_param("paymentType");
+            $risultato_ordine = $db->ordina($nome, $cognome, $indirizzo, $telefono, $email, $orarioConsegna, $note, $deliveryType, $paymentType);
             if ($risultato_ordine['success']) {
                 sendJsonResponse([
                     'status' => 1,

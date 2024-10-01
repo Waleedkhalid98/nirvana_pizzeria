@@ -156,10 +156,11 @@ $db = new Database();
               <table class="table table-responsive table-striped mt-3" id="tabellaNonConfermati">
                   <thead>
                       <tr>
-                          <th scope="col">id_carrello</th>
-                          <th scope="col">nome</th>
-                          <th scope="col">cognome</th>
-                          <th scope="col">email</th>
+                          <th scope="col">Id_carrello</th>
+                          <th scope="col">Nome</th>
+                          <th scope="col">Cognome</th>
+                          <th scope="col">Email</th>
+                          <th scope="col">Data</th>
                           <th scope="col">Totale</th>
                           <th scope="col">Dettaglio</th>
                       </tr>
@@ -508,6 +509,7 @@ function elencoOrdini() {
                             <td>${ordine.nome}</td>
                             <td>${ordine.cognome}</td>
                             <td>${ordine.email}</td>
+                            <td>${ordine.data_ordinazione}</td>
                             <td>${ordine.prezzo}€</td>
                             <td><button class="btn btn-success btn-sm" onclick="visualizzaDettagli(${ordine.id_carrello})">Apri ordine</button></td>
                         </tr>

@@ -281,7 +281,7 @@ class Database {
         return $id_carrello;
     }
 
-    public function ordina($nome, $cognome, $indirizzo, $telefono, $email, $orarioConsegna, $note, $deliveryType) {
+    public function ordina($nome, $cognome, $indirizzo, $telefono, $email, $orarioConsegna, $note, $deliveryType, $paymentType) {
         $id_carrello = $this->esisteCarrello();
         $data_odierna = date('Y-m-d');
 
@@ -313,7 +313,7 @@ class Database {
             $tipologia = ($deliveryType === 'Delivery') ? 1 : 2;
     
             // Inserisci i dettagli dell'ordine nella tabella `carrello_dettaglio`
-            if ($this->inserisciDettagliOrdine($id_carrello, $tipologia, $orarioConsegna, $note)) {
+            if ($this->inserisciDettagliOrdine($id_carrello, $tipologia, $orarioConsegna, $note, $paymentType)) {
                 // Salva le informazioni dell'utente
                 if ($this->salvaInformazioniUtente($nome, $cognome, $email, $indirizzo, $telefono, $id_carrello)) {
                     // Aggiorna il flag "ordinato" per il carrello
@@ -399,7 +399,7 @@ class Database {
         // Ottieni gli ordini e il totale del prezzo direttamente in un'unica query
         $ordini = get_data("
             SELECT 
-                c.id_carrello, uc.nome, uc.cognome, uc.email, 
+                c.id_carrello, c.data_ordinazione, uc.nome, uc.cognome, uc.email, 
                 SUM(pc.prezzo * pc.numero_prodotti) AS prezzo_totale
             FROM carrello c
             INNER JOIN utente_carrello uc ON c.id_carrello = uc.id_carrello
@@ -422,6 +422,7 @@ class Database {
                     'nome' => $item['nome'],
                     'cognome' => $item['cognome'],
                     'email' => $item['email'],
+                    'data_ordinazione' => $item['data_ordinazione'],
                     'prezzo' => $item['prezzo_totale'] // Prezzo totale per l'ordine
                 ];
             } else {
@@ -510,6 +511,13 @@ class Database {
         // Controlla se l'ordine esiste
         if (!empty($ordine) && is_array($ordine[0])) {
             $item = $ordine[0]; // Prendi il primo (e unico) elemento
+
+
+            if($item['tipologia_pagamento']=="Elettronico"){
+                $tipologia_pagamento="POS";
+            }else{
+                $tipologia_pagamento="CASH";
+            }
     
             return [
                 'success' => true,
@@ -520,7 +528,7 @@ class Database {
                     'email' => $item['email'],
                     'indirizzo' => $item['indirizzo'],
                     'telefono' => $item['telefono'],
-                    'pagamento' => "POS",
+                    'pagamento' => $tipologia_pagamento,
                     'orario_consegna' => substr($item['orario_consegna'], 0, 5),
                     'prodotti' => $prodotti_list
                     // Aggiungi altri campi se necessario
@@ -994,9 +1002,9 @@ class Database {
     
     
 
-    private function inserisciDettagliOrdine($id_carrello, $tipologia, $orarioConsegna, $note) {
-        $sqlDettagli = "INSERT INTO carrello_dettaglio (id_carrello, tipologia, orario_consegna, note)
-                        VALUES ('$id_carrello', '$tipologia', '$orarioConsegna', '$note')";
+    private function inserisciDettagliOrdine($id_carrello, $tipologia, $orarioConsegna, $note, $paymentType) {
+        $sqlDettagli = "INSERT INTO carrello_dettaglio (id_carrello, tipologia, orario_consegna, note, tipologia_pagamento)
+                        VALUES ('$id_carrello', '$tipologia', '$orarioConsegna', '$note','$paymentType')";
         
         return $this->conn->query($sqlDettagli) === TRUE;
     }

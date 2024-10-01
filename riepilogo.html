@@ -632,7 +632,8 @@ document.querySelectorAll('.btn-group-toggle label').forEach(label => {
                 email: email,
                 orarioConsegna: orarioConsegna,
                 note: note,
-                deliveryType: deliveryType
+                deliveryType: deliveryType,
+                paymentType: paymentType
             },
             success: function(result) {
                 if (result.status === 1) {
