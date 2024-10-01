@@ -132,12 +132,15 @@ $id_utente = $_SESSION['id_utente'];
 
 <div class="text-center mb-5">
     <button class="btn btn-primary category-btn" data-category="Tutte">Tutte</button>
-    <button class="btn btn-primary category-btn" data-category="Pizza">Pizza</button>
     <button class="btn btn-primary category-btn" data-category="Hamburger">Hamburger</button>
-    <button class="btn btn-primary category-btn" data-category="">Piadine</button>
-    <button class="btn btn-primary category-btn" data-category="">Fritti</button>
+    <button class="btn btn-primary category-btn" data-category="Pizze Rosse">Pizze Rosse</button>
+    <button class="btn btn-primary category-btn" data-category="Pizze Bianche">Pizze Bianche</button>
+    <button class="btn btn-primary category-btn" data-category="pizze speciali">Pizze speciali</button>
+    <button class="btn btn-primary category-btn" data-category="panini">Calzoni/Panini</button>
+    <button class="btn btn-primary category-btn" data-category="piatti unici">Piatti unici</button>
+    <button class="btn btn-primary category-btn" data-category="dolci">Dolci</button>
     <button class="btn btn-primary category-btn" data-category="">Bibite</button>
-    <button class="btn btn-primary category-btn" data-category="">Dolci</button>
+
 </div>
 
 <div id="menu-container" class="row no-gutters d-flex">
@@ -157,6 +160,7 @@ $id_utente = $_SESSION['id_utente'];
                                 <div class="text p-4">
                                     <h3>' . htmlspecialchars($row['titolo']) . '</h3>
                                     <p>' . htmlspecialchars($row['descrizione']) . '</p>
+                                    <p>' . htmlspecialchars($row['prezzo']) . '€</p>
                                     <button class="ml-2 btn btn-white btn-outline-white" onclick="aggiungiProdotto(' . $row['id'] . ')">Aggiungi al Carrello</button>
                                 </div>
                             </div>
