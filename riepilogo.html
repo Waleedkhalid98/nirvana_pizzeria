@@ -260,19 +260,19 @@ box-sizing: border-box;
                     <h2 class="mb-4 text-center">Informazioni personali</h2>
                     <div>
                         <label for="name">Nome</label>
-                        <input type="text" id="name" name="name" placeholder="inserisci.." >
+                        <input type="text" id="name" name="name" placeholder="inserisci..." >
                     
                         <label for="surname">Cognome</label>
-                        <input type="text" id="surname" name="surname" placeholder="inserisci.." >
+                        <input type="text" id="surname" name="surname" placeholder="inserisci..." >
 
                         <label for="address">Indirizzo</label>
-                        <input type="text" id="address" name="address" placeholder="inseriscio.." >
+                        <input type="text" id="address" name="address" placeholder="inserisci..." >
 
                         <label for="phone">Numero di telefono</label>
-                        <input type="tel" id="phone" name="phone" placeholder="inserisci.." > 
+                        <input type="tel" id="phone" name="phone" placeholder="inserisci..." > 
                     
                         <label for="email">Email</label>
-                        <input type="email" id="email" name="email" placeholder="inserisci.." >
+                        <input type="email" id="email" name="email" placeholder="inserisci..." >
                     
                     
                       
@@ -303,22 +303,24 @@ box-sizing: border-box;
                             </script>
                         </select>
                     </div>
-
-                    
-                    <label for="time">Scegli il metodo di pagamento:</label>
-                    <div class="btn-group-toggle" data-toggle="buttons">
-                        <label class="btn btn-outline-primary paymentOption" id="cardButton">
-                            <input type="radio" name="paymentType" value="Elettronico" required autocomplete="off">
-                            <span class="fas fa-money-check-alt"></span> Pagamento Elettronico con POS
-                        </label>
-                        <label class="btn btn-outline-primary paymentOption" id="cashButton">
-                            <input type="radio" name="paymentType" value="Contante" required autocomplete="off">
-                            <span class="fas fa-money-bill-wave"></span> Pagamento in Contante
-                        </label>
-                    </div>
                     
                     
                 </div>
+
+            <div class="step">
+                <label for="pay">Scegli il metodo di pagamento:</label>
+                <div class="btn-group-toggle" data-toggle="buttons">
+                    <label class="btn btn-outline-primary paymentOption" id="cardButton">
+                        <input type="radio" name="paymentType" value="Elettronico" required autocomplete="off">
+                        <span class="fas fa-money-check-alt"></span> Pagamento Elettronico con POS
+                    </label>
+                    <label class="btn btn-outline-primary paymentOption" id="cashButton">
+                        <input type="radio" name="paymentType" value="Contante" required autocomplete="off">
+                        <span class="fas fa-money-bill-wave"></span> Pagamento in Contante
+                    </label>
+                </div>
+            </div>
+
                 <!-- Step 4: Riepilogo dell'ordine e riepilogo delle informazioni inserite -->
                 <div class="step">
 

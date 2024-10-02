@@ -16,6 +16,8 @@ class Database {
         
     }
     
+
+    
     private function getSecretKey() {
         $secret_key=("SELECT secret_key FROM secret_keys WHERE is_active=true");
         if ($secret_key) {
