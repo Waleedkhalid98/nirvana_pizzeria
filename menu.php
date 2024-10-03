@@ -131,18 +131,23 @@ $id_utente = $_SESSION['id_utente'];
 </div>
 
 <div class="text-center mb-5">
-    <button class="btn btn-primary category-btn" data-category="Tutte">Tutte</button>
-    <button class="btn btn-primary category-btn" data-category="Hamburger">Hamburger</button>
-    <button class="btn btn-primary category-btn" data-category="Pizze Rosse">Pizze Rosse</button>
-    <button class="btn btn-primary category-btn" data-category="Pizze Bianche">Pizze Bianche</button>
-    <button class="btn btn-primary category-btn" data-category="pizze speciali">Pizze speciali</button>
-    <button class="btn btn-primary category-btn" data-category="panini">Calzoni/Panini</button>
-    <button class="btn btn-primary category-btn" data-category="Fritti">fritti</button>
-    <button class="btn btn-primary category-btn" data-category="piatti unici">Piatti unici</button>
-    <button class="btn btn-primary category-btn" data-category="dolci">Dolci</button>
-    <button class="btn btn-primary category-btn" data-category="">Bibite</button>
-
+    <button class="btn btn-primary category-btn ftco-animate" data-category="Tutte">Tutte</button>
+    <button class="btn btn-primary category-btn ftco-animate" data-category="Hamburger">Hamburger</button>
+    <button class="btn btn-primary category-btn ftco-animate" data-category="Pizze Rosse">Pizze Rosse</button>
+    <button class="btn btn-primary category-btn ftco-animate" data-category="Pizze Bianche">Pizze Bianche</button>
+    <button class="btn btn-primary category-btn ftco-animate" data-category="pizze speciali">Pizze speciali</button>
+    <button class="btn btn-primary category-btn ftco-animate" data-category="panini">Calzoni/Panini</button>
+    <button class="btn btn-primary category-btn ftco-animate" data-category="Fritti">fritti</button>
+    <button class="btn btn-primary category-btn ftco-animate" data-category="piatti unici">Piatti unici</button>
+    <button class="btn btn-primary category-btn ftco-animate" data-category="dolci">Dolci</button>
+    <button class="btn btn-primary category-btn ftco-animate" data-category="">Bibite</button>
 </div>
+<div class="text-center mt-5 mb-5">
+    <a href="images/menuNirvana.pdf" target="_blank">
+        <button class="btn btn-primary ftco-animate">Menu con allergenici</button>
+    </a>
+</div>
+
 
 <div id="menu-container" class="row no-gutters d-flex">
     <div class="container-wrap">

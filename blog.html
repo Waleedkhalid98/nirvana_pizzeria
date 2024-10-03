@@ -69,18 +69,23 @@
       position: relative;
       z-index: 0; /* Contenuto sopra l'overlay */
   }
+
+  .hidden {
+  display: none;
+}
+
   </style>
   
    
   <section class="mt-5">
     <div class="container">
-        <div class="row justify-content-center mb-5 pb-3">
-            <div class="col-md-7 heading-section ftco-animate text-center">
-                <h2 class="mb-4">I nostri eventi</h2>
-                <p>Festeggia con noi! Organizza il tuo giovedì universitario al Nirvana e goditi un'atmosfera vivace e ricordi indimenticabili.</p>
-            </div>
+      <div class="row justify-content-center mb-5 pb-3">
+        <div class="col-md-7 heading-section ftco-animate text-center">
+          <h2 class="mb-4">I nostri eventi</h2>
+          <p>Festeggia con noi! Organizza il tuo giovedì universitario al Nirvana e goditi un'atmosfera vivace e ricordi indimenticabili.</p>
         </div>
-        <div class="row d-flex">
+      </div>
+      <div class="row d-flex" id="eventi-container">
             <div class="col-md-4 d-flex ftco-animate">
                 <div class="blog-entry align-self-stretch">
                     <a  class="block-20" style="background-image: url('images/barto.png');">
@@ -171,28 +176,62 @@
                     </div>
                 </div>
             </div>
+            <div class="col-md-4 d-flex ftco-animate">
+                <div class="blog-entry align-self-stretch">
+                    <a  class="block-20" style="background-image: url('images/university.png');">
+                    </a>
+                    <div class="text py-4 d-block">
+                        <div class="meta">
+                            <div><a href="#">10 Set, 2018</a></div>
+                            <div><a href="#">Admin</a></div>
+                            <div><a href="#" class="meta-chat"><span class="icon-chat"></span> 3</a></div>
+                        </div>
+                        <h3 class="heading mt-2"><a href="#">Festa di Apertura della Stagione Universitaria</a></h3>
+                        <p>Unisciti a noi per dare il benvenuto al nuovo anno accademico con musica, balli e tanto divertimento!</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 d-flex ftco-animate">
+                <div class="blog-entry align-self-stretch">
+                    <a  class="block-20" style="background-image: url('images/barto.png');">
+                    </a>
+                    <div class="text py-4 d-block">
+                        <div class="meta">
+                            <div><a href="#">10 Set, 2018</a></div>
+                            <div><a href="#">Admin</a></div>
+                            <div><a href="#" class="meta-chat"><span class="icon-chat"></span> 3</a></div>
+                        </div>
+                        <h3 class="heading mt-2"><a href="#">Festa di Apertura della Stagione Universitaria</a></h3>
+                        <p>Unisciti a noi per dare il benvenuto al nuovo anno accademico con musica, balli e tanto divertimento!</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 d-flex ftco-animate">
+                <div class="blog-entry align-self-stretch">
+                    <a  class="block-20" style="background-image: url('images/giovedi.png');">
+                    </a>
+                    <div class="text py-4 d-block">
+                        <div class="meta">
+                            <div><a href="#">10 Set, 2018</a></div>
+                            <div><a href="#">Admin</a></div>
+                            <div><a href="#" class="meta-chat"><span class="icon-chat"></span> 3</a></div>
+                        </div>
+                        <h3 class="heading mt-2"><a href="#">Festa di Apertura della Stagione Universitaria</a></h3>
+                        <p>Unisciti a noi per dare il benvenuto al nuovo anno accademico con musica, balli e tanto divertimento!</p>
+                    </div>
+                </div>
+            </div>
         </div>
+        <div class="row mt-2">
+            <div class="col text-center ftco-animate mb-5">
+              <button id="mostra-tutti" class="btn btn-primary">Mostra tutti gli eventi</button>
+            </div>
+          </div>
     </div>
 </section>
 
-        </div>
-        <div class="row mt-5">
-          <div class="col text-center">
-            <div class="block-27">
-              <ul>
-                <li><a href="#">&lt;</a></li>
-                <li class="active"><span>1</span></li>
-                <li><a href="#">2</a></li>
-                <li><a href="#">3</a></li>
-                <li><a href="#">4</a></li>
-                <li><a href="#">5</a></li>
-                <li><a href="#">&gt;</a></li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
+
+
 
     <footer class="ftco-footer ftco-section img">
       <div class="overlay"></div>
@@ -285,5 +324,32 @@
   <script src="js/google-map.js"></script>
   <script src="js/main.js"></script>
     
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+  // Recupera tutti gli eventi
+  const eventi = document.querySelectorAll("#eventi-container .blog-entry");
+  
+  // Mostra solo i primi 6 eventi
+  eventi.forEach((evento, index) => {
+    if (index >= 6) {
+      evento.classList.add("hidden");
+    }
+  });
+
+  // Aggiungi l'evento al bottone per mostrare tutti gli eventi
+  const btnMostraTutti = document.getElementById("mostra-tutti");
+  btnMostraTutti.addEventListener("click", function () {
+    // Mostra tutti gli eventi
+    eventi.forEach(evento => {
+      evento.classList.remove("hidden");
+    });
+
+    // Nascondi il bottone dopo aver mostrato tutti gli eventi
+    btnMostraTutti.style.display = "none";
+  });
+});
+
+</script>
+
   </body>
 </html>

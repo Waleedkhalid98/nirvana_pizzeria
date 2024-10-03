@@ -70,8 +70,48 @@
     text-align: center; /* Centra il testo */
 }
 
+.cookie-banner {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  background-color: #161a1d;
+  color: white;
+  padding: 15px;
+  text-align: center;
+  box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+}
+
+.cookie-banner p {
+  margin: 0;
+  display: inline;
+}
+
+.cookie-banner button {
+  margin-left: 15px;
+  background-color: #FAC564;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  color: #2c3e50;
+}
+
+.cookie-banner a {
+  color: #FAC564;
+  text-decoration: underline;
+}
+
+
 	</style>
     
+	<div id="cookie-banner" class="cookie-banner" style="display: none;">
+		<p>Questo sito utilizza cookie per migliorare l'esperienza utente. Continuando a navigare, accetti l'uso dei cookie. <a href="cookie-policy.html" target="_blank">Leggi di più</a></p>
+		<button id="accept-cookies" class="btn btn-primary">Accetta</button>
+		<button id="decline-cookies" class="btn btn-secondary">Rifiuta</button>
+	  </div>
+	  
+	  
+
 	<div class="slider-item" style="background-image: url(images/locale.png); height: 600px;">
 		<div class="overlay"></div>
 	  <div class="container">
@@ -128,10 +168,10 @@
     <section class="ftco-about d-md-flex">
     	<div class="one-half img" style="background-image: url(images/Immaginesafi.jpg);"></div>
     	<div class="one-half ftco-animate">
-        <div class="heading-section ftco-animate ">
+        <div class="heading-section ftco-animate">
           <h2 class="mb-4">Benvenuto da nirvana pub <span class="flaticon-pizza">pizzeria</span></h2>
         </div>
-        <div>
+        <div class="ftco-animate">
   				<p style="color: white;">Benvenuto al Nirvana pub pizzeria! Qui la passione per il buon cibo si trasforma in un'esperienza unica. Scopri le nostre pizze artigianali, realizzate con ingredienti freschi e di qualità, e lasciati conquistare dai nostri succulenti panini, perfetti per ogni occasione. Non dimenticare di assaporare i nostri aperitivi, ideali per condividere momenti speciali con amici e familiari. Che tu venga per una serata rilassante o per una cena festiva, al Nirvana troverai sempre un piatto che fa per te. Unisciti a noi e lasciati trasportare in un viaggio di sapori indimenticabili!</p>
   			</div>
     	</div>
@@ -485,5 +525,65 @@
   <script src="js/google-map.js"></script>
   <script src="js/main.js"></script>
     
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  // Funzione per impostare un cookie
+  function setCookie(name, value, days) {
+    var expires = "";
+    if (days) {
+      var date = new Date();
+      date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+      expires = "; expires=" + date.toUTCString();
+    }
+    document.cookie = name + "=" + (value || "") + expires + "; path=/";
+  }
+
+  // Funzione per ottenere un cookie
+  function getCookie(name) {
+    var nameEQ = name + "=";
+    var ca = document.cookie.split(';');
+    for (var i = 0; i < ca.length; i++) {
+      var c = ca[i];
+      while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+      if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+    }
+    return null;
+  }
+
+  // Funzione per mostrare o nascondere il banner dei cookie
+  function checkCookieConsent() {
+    var cookieConsent = getCookie("cookieConsent");
+    if (cookieConsent === "accepted" || cookieConsent === "declined") {
+      // Nasconde il banner se l'utente ha già accettato o rifiutato
+      document.getElementById("cookie-banner").style.display = "none";
+    } else {
+      // Mostra il banner se non c'è nessuna scelta
+      document.getElementById("cookie-banner").style.display = "block";
+    }
+  }
+
+  // Controlla il consenso dei cookie al caricamento della pagina
+  checkCookieConsent();
+
+  // Quando l'utente accetta i cookie
+  document.getElementById("accept-cookies").addEventListener("click", function () {
+    // Nascondi il banner
+    document.getElementById("cookie-banner").style.display = "none";
+    // Salva l'accettazione nei cookie per 365 giorni
+    setCookie("cookieConsent", "accepted", 365);
+  });
+
+  // Quando l'utente rifiuta i cookie
+  document.getElementById("decline-cookies").addEventListener("click", function () {
+    // Nascondi il banner
+    document.getElementById("cookie-banner").style.display = "none";
+    // Salva il rifiuto nei cookie per 365 giorni
+    setCookie("cookieConsent", "declined", 365);
+  });
+});
+
+
+</script>
+
   </body>
 </html>
