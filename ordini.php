@@ -156,7 +156,7 @@ $db = new Database();
               <table class="table table-responsive table-striped mt-3" id="tabellaNonConfermati">
                   <thead>
                       <tr>
-                          <th scope="col">Id_carrello</th>
+                          <th scope="col">#</th>
                           <th scope="col">Nome</th>
                           <th scope="col">Cognome</th>
                           <th scope="col">Email</th>
@@ -501,11 +501,12 @@ function elencoOrdini() {
             if (result.status === 1) {
                 const elencoOrdini = $("#elencoOrdini");
                 elencoOrdini.empty();
-                
+                counter=0;
                 result.data.elencoOrdini.forEach(ordine => {
+                    counter++
                     const ordineRow = `
                         <tr>
-                            <td>${ordine.id_carrello}</td>
+                            <td>${counter}</td>
                             <td>${ordine.nome}</td>
                             <td>${ordine.cognome}</td>
                             <td>${ordine.email}</td>

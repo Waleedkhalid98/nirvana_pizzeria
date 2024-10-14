@@ -115,13 +115,117 @@ $id_utente = $_SESSION['id_utente'];
     }
 
 
+
+
+
+/* Stile generale per la categoria-container */
+
+/* Media query per dispositivi mobili */
+@media (max-width: 768px) { /* Regola il valore in base alla tua definizione di "mobile" */
+    /* Stile per i pulsanti più piccoli */
+    .category-btn {
+        flex: 0 1 30%; /* I pulsanti occuperanno fino al 30% della larghezza del contenitore */
+        margin: 5px; /* Spaziatura tra i pulsanti */
+        padding: 5px 10px; /* Ridotto per rendere i pulsanti più compatti */
+        border-radius: 4px; /* Mantieni gli angoli leggermente arrotondati */
+        font-size: 10px; /* Dimensione del testo ridotta */
+        line-height: 1.2; /* Rende il testo un po' più compatto */
+        box-sizing: border-box; /* Include padding e bordo nelle dimensioni del pulsante */
+    }
+}
+
+
+@media (max-width: 768px) { /* Regola il valore in base alla tua definizione di "mobile" */
+    /* Stile per i pulsanti più piccoli */
+    .category-container {
+    display: flex;
+    flex-wrap: wrap; /* Permette ai pulsanti di andare a capo */
+    justify-content: center; /* Centra i pulsanti orizzontalmente */
+    padding: 10px 0; /* Spaziatura sopra e sotto */
+}
+
+}
+
+
+
+
+/* Stile per i pulsanti su schermi più grandi (opzionale) */
+@media (min-width: 769px) {
+    .category-btn {
+        flex: 0 1 20%; /* Maggiore larghezza su schermi più grandi */
+        font-size: 14px; /* Dimensione del testo normale */
+        padding: 10px 15px; /* Dimensione del padding normale */
+    }
+}
+
+
+#btn-aggiungi {
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+#btn-aggiungi.aggiunto {
+  background-color: #fac564;
+  color: white;
+}
+
+#btn-aggiungi.aggiunto::after {
+  content: '✔'; /* Icona di spunta */
+  font-size: 12px;
+  margin-left: 10px;
+  opacity: 0;
+  transform: scale(0);
+  display: inline-block;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+#btn-aggiungi.aggiunto:after {
+  opacity: 1;
+  transform: scale(1);
+}
+
+
+@media (max-width: 768px) { /* Regola il valore in base alla tua definizione di "mobile" */
+    .menu-container {
+        padding: 15px; /* Aumenta il padding per schermi piccoli */
+    }
+}
+
+@media (max-width: 768px) { /* Regola il valore in base alla tua definizione di "mobile" */
+    .container-wrap {
+        padding: 15px; /* Aumenta il padding per schermi piccoli */
+    }
+}
+
+@media (max-width: 768px) { /* Regola il valore in base alla tua definizione di "mobile" */
+    #carrello {
+        width: 100%; /* Aumenta il padding per schermi piccoli */
+    }
+}
+
+
+@media (max-width: 768px) { /* Regola il valore in base alla tua definizione di "mobile" */
+    #btn-aggiungi {
+        padding: 5px 10px; /* Ridotto per rendere il pulsante più compatto */
+        font-size: 10px; /* Dimensione del testo ridotta */
+    }
+}
+
+
+@media (max-width: 575.98px) {
+    #ordine-container {
+        margin-bottom: 20%; /* Aggiunge padding inferiore sui dispositivi mobili */
+    }
+}
+
+
+
 </style>
 
 
     
 <section class="mt-5">
 <div class="container">
-    <div class="row justify-content-center mb-4">
+    <div class="row justify-content-center">
         <div class="col-md-7 heading-section ftco-animate text-center">
             <h2 class="mb-4">Il nostro menu</h2>
             <p class="flip"><span class="deg1"></span><span class="deg2"></span><span class="deg3"></span></p>
@@ -130,23 +234,16 @@ $id_utente = $_SESSION['id_utente'];
     </div>
 </div>
 
-<div class="text-center mb-5">
-    <button class="btn btn-primary category-btn ftco-animate" data-category="Tutte">Tutte</button>
-    <button class="btn btn-primary category-btn ftco-animate" data-category="Hamburger">Hamburger</button>
-    <button class="btn btn-primary category-btn ftco-animate" data-category="Pizze Rosse">Pizze Rosse</button>
-    <button class="btn btn-primary category-btn ftco-animate" data-category="Pizze Bianche">Pizze Bianche</button>
-    <button class="btn btn-primary category-btn ftco-animate" data-category="focacce">Focacce</button>
-    <button class="btn btn-primary category-btn ftco-animate" data-category="pizze speciali">Pizze speciali</button>
-    <button class="btn btn-primary category-btn ftco-animate" data-category="fritti">Fritti</button>
-    <button class="btn btn-primary category-btn ftco-animate" data-category="panini">Calzoni e Panini</button>
-    <button class="btn btn-primary category-btn ftco-animate" data-category="piatti unici">Piatti unici</button>
-    <button class="btn btn-primary category-btn ftco-animate" data-category="dolci">Dolci</button>
-    <button class="btn btn-primary category-btn ftco-animate" data-category="bibite">Bibite</button>
-</div>
-<div class="text-center" style="position: fixed; bottom: 20px; left: 20px; z-index: 1000;">
-    <a href="images/menuNirvana.pdf" target="_blank">
-        <button class="btn btn-primary">Menu con allergenici</button>
-    </a>
+<div class="category-container text-center mb-5">
+    <button class="btn btn-primary category-btn" data-category="Hamburger">Hamburger</button>
+    <button class="btn btn-primary category-btn" data-category="Pizze Rosse">Pizze Rosse</button>
+    <button class="btn btn-primary category-btn" data-category="Pizze Bianche">Pizze Bianche</button>
+    <button class="btn btn-primary category-btn" data-category="Pizze speciali">Pizze speciali</button>
+    <button class="btn btn-primary category-btn" data-category="panini">Calzoni/Panini</button>
+    <button class="btn btn-primary category-btn" data-category="Fritti">Fritti</button>
+    <button class="btn btn-primary category-btn" data-category="piatti unici">Piatti unici</button>
+    <button class="btn btn-primary category-btn" data-category="dolci">Dolci</button>
+    <button class="btn btn-primary category-btn" data-category="">Bibite</button>
 </div>
 
 
@@ -169,7 +266,7 @@ $id_utente = $_SESSION['id_utente'];
                                     <h3>' . htmlspecialchars($row['titolo']) . '</h3>
                                     <p>' . htmlspecialchars($row['descrizione']) . '</p>
                                     <p>' . htmlspecialchars($row['prezzo']) . '€</p>
-                                    <button class="ml-2 btn btn-white btn-outline-white" onclick="aggiungiProdotto(' . $row['id'] . ')">Aggiungi al Carrello</button>
+                                    <button id="btn-aggiungi" class="ml-2 btn btn-white btn-outline-white" data-id="'.$row['id'].'"  onclick="aggiungiProdotto(' . $row['id'] . ')">Aggiungi al Carrello</button>
                                 </div>
                             </div>
                           </div>';
@@ -189,14 +286,19 @@ $id_utente = $_SESSION['id_utente'];
 </button>
 
 <!-- Sidebar carrello che scorre da destra -->
-<div id="carrello" class="bg-dark text-light shadow-lg">
+<div id="carrello" class="bg-dark text-light shadow-lg" >
     <div class="d-flex justify-content-between align-items-center p-3 border-bottom">
         <h2 class="cart-title m-0">Carrello</h2>
         <span class="close-cart btn btn-danger btn-sm" style="color: #fac564;" >&times;</span>
     </div>
     <div class="p-3">
-        <table class="table table-hover table-borderless text-light" id="cartTable">
-            <thead>
+   
+
+
+    <div class="table-responsive">
+        <!-- Versione mobile con table-sm (visibile solo su schermi piccoli) -->
+        <table class="table table-hover table-borderless table-sm text-light d-block d-sm-none"  id="cartTable">
+        <thead>
                 <tr>
                     <th>Prodotto</th>
                     <th>Prezzo</th>
@@ -208,9 +310,26 @@ $id_utente = $_SESSION['id_utente'];
                 <!-- I prodotti aggiunti verranno inseriti qui -->
             </tbody>
         </table>
+        <!-- Versione desktop (nascosta su schermi piccoli) -->
+        <table class="table table-hover table-borderless text-light d-none d-sm-table"  id="cartTable">
+            <thead>
+                    <tr>
+                        <th>Prodotto</th>
+                        <th>Prezzo</th>
+                        <th>Quantità</th>
+                        <th></th>
+                    </tr>
+            </thead>
+            <tbody>
+                <!-- I prodotti aggiunti verranno inseriti qui -->
+            </tbody>
+        </table>
+       
     </div>
-    <div class="p-3 border-top">
-        <a class="btn btn-success btn-block btn-lg" href="riepilogo.html" >Ordina Ora</a>
+
+    </div>
+    <div   class="p-3 border-top">
+        <a  id="ordine-container" class="btn btn-success btn-block btn-lg" href="riepilogo.html" >Ordina Ora</a>
     </div>
 </div>
 
@@ -360,7 +479,18 @@ $id_utente = $_SESSION['id_utente'];
             processData: false,
             success: function (result) {
                 if(result == 1){
+                    $('button[data-id="' + id_prodotto + '"]').text('Aggiunto al Carrello');
+                    $('button[data-id="' + id_prodotto + '"]').addClass('aggiunto');
+
+                    setTimeout(function() {
+                        
+                        $('button[data-id="' + id_prodotto + '"]').text('Aggiungi al Carrello');
+                    $('button[data-id="' + id_prodotto + '"]').removeClass('aggiunto');
+                    }, 1000);
+
                     riempiCarrello();
+
+                  
                 }else{
                     alert("Errore durante l'aggiunta del prodotto.");
                 }
@@ -409,7 +539,7 @@ function riempiCarrello() {
 
                     // Bottone per diminuire quantità
                     tableHTML += "<div class='input-group'>";
-                    tableHTML += "<button class='btn btn-outline-secondary btn-sm' type='button' onclick='diminuisciQuantita(" + prodotto.id_prodottiCarrello + ")'>";
+                    tableHTML += "<button style='border: none; box-shadow: none;' class='btn btn-outline-secondary btn-sm' type='button' onclick='diminuisciQuantita(" + prodotto.id_prodottiCarrello + ")'>";
                     tableHTML += "<i class='fas fa-minus-circle'></i>";
                     tableHTML += "</button>";
 
@@ -417,7 +547,7 @@ function riempiCarrello() {
                     tableHTML += "<input type='text' class='form-control form-control-sm text-center' id='quantity_" + prodotto.id_prodottiCarrello + "' value='"+prodotto.numero_prodotti+"' min='1' max='100' readonly>";
 
                     // Bottone per incrementare quantità
-                    tableHTML += "<button class='btn btn-outline-secondary btn-sm' type='button' onclick='incrementaQuantita(" + prodotto.id_prodottiCarrello + ")'>";
+                    tableHTML += "<button style='border: none; box-shadow: none;' class='btn btn-outline-secondary btn-sm' type='button' onclick='incrementaQuantita(" + prodotto.id_prodottiCarrello + ")'>";
                     tableHTML += "<i class='fas fa-plus-circle'></i>";
                     tableHTML += "</button>";
                     tableHTML += "</div>";

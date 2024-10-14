@@ -544,6 +544,35 @@ class Database {
         }
     }
 
+    public function visualizzaDettagliUtente($id_utente) {
+        $utente = get_data("SELECT *  FROM utente_carrello WHERE id_utente_carrello='$id_utente';");
+
+
+
+        // Controlla se l'ordine esiste
+        if (!empty($utente) && is_array($utente[0])) {
+            $item = $utente[0]; // Prendi il primo (e unico) elemento
+
+
+    
+            return [
+                'success' => true,
+                'data' => [
+                    'nome' => $item['nome'],
+                    'cognome' => $item['cognome'],
+                    'email' => $item['email'],
+                    'indirizzo' => $item['indirizzo'],
+                    'telefono' => $item['telefono'],
+                ]
+            ];
+        } else {
+            return [
+                'success' => false,
+                'message' => 'Ordine non trovato.'
+            ];
+        }
+    }
+
     
     public function visualizzaDettagliConfermato($id_carrello) {
         $ordine = get_data("SELECT * 

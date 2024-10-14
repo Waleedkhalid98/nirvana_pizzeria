@@ -234,6 +234,35 @@ switch($paction)
         }
     break;
 
+
+    case "visualizzaDettagliUtente":
+        try {
+            $id_utente = get_param("id_utente");
+            $risultato_utente = $db->visualizzaDettagliUtente($id_utente);
+            
+            if ($risultato_utente['success']) {
+                sendJsonResponse([
+                    'status' => 1,
+                    'message' => 'Dettagli dell\'ordine recuperati con successo',
+                    'data' => [
+                        'dettaglio' => $risultato_utente['data'] // Cambiato da 'dettaglio' a 'data'
+                    ]
+                ]);
+            } else {
+                sendJsonResponse([
+                    'status' => 0,
+                    'message' => $risultato_utente['message'] // Utilizza il messaggio di errore specifico
+                ]);
+            }
+        } catch (Exception $e) {
+            error_log("Errore nell'ordine: " . $e->getMessage());
+            sendJsonResponse([
+                'status' => 0,
+                'message' => 'Si è verificato un errore inaspettato'
+            ]);
+        }
+    break;
+
     case "visualizzaDettagliConfermato":
         try {
             $id_carrello = get_param("id_carrello");

@@ -127,21 +127,34 @@ function elencoUtenti() {
                 const elencoOrdini = $("#elencoUtenti");
                 elencoOrdini.empty();
                 
+                const utentiUnici = [];
+
                 result.data.elencoUtenti.forEach(utente => {
-                    const ordineRow = `
-                        <tr>
-                            <td>${utente.id_utente}</td>
-                            <td>${utente.nome}</td>
-                            <td>${utente.cognome}</td>
-                            <td>${utente.email}</td>
-                            <td>
-                                <button class="btn btn-secondary" onclick="visualizzaUtente(${utente.id})">
-                                    <i class="bi bi-person-fill"></i> <!-- Icona della scheda utente -->
-                                </button>
-                            </td>                         
-                        </tr>
-                    `;
-                    elencoOrdini.append(ordineRow);
+                    const nomePulito = utente.nome.trim().toLowerCase();
+                    const cognomePulito = utente.cognome.trim().toLowerCase();
+                    const emailPulita = utente.email.trim().toLowerCase();
+
+                    const chiaveUnica = `${nomePulito}-${cognomePulito}-${emailPulita}`;
+
+                    if (!utentiUnici.includes(chiaveUnica)) {
+                        utentiUnici.push(chiaveUnica); // la chiave unica nell'array per evitare duplicati
+
+                        const ordineRow = `
+                            <tr>
+                                <td>${utente.id_utente}</td>
+                                <td>${nomePulito}</td>
+                                <td>${cognomePulito}</td>
+                                <td>${emailPulita}</td>
+                                <td>
+                                    <button class="btn btn-secondary" onclick="visualizzaUtente(${utente.id_utente})">
+                                        <i class="bi bi-person-fill"></i> <!-- Icona della scheda utente -->
+                                    </button>
+                                </td>                         
+                            </tr>
+                        `;
+
+                        elencoOrdini.append(ordineRow); 
+                    }
                 });
             } else {
                 alert("Errore durante il caricamento degli utenti.");
@@ -154,9 +167,30 @@ function elencoUtenti() {
     });
 }
 
+
 function visualizzaUtente(id) {
     // Mostra il modal quando si clicca sul bottone
     $("#modalVisualizzaUtente").modal('show');
+
+    $.ajax({
+        type: "POST",
+        url: 'action.php?_action=visualizzaDettagliUtente',
+        data: { id_utente: id },
+        dataType: 'json',
+        success: function (result) {
+            if (result.status === 1) {
+                // Popola il modal con i dettagli dell'ordine
+                $("#nome").val(result.data.dettaglio.nome);
+                $("#cognome").val(result.data.dettaglio.cognome);
+                $("#email").val(result.data.dettaglio.email);
+                $("#telefono").val(result.data.dettaglio.telefono);
+                $("#indirizzo").val(result.data.dettaglio.indirizzo);
+
+            }else {
+                alert("error")
+            }
+        }
+    });
     // Qui puoi aggiungere logica per popolare il modal con i dati dell'utente
 }
 
