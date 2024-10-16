@@ -1,9 +1,9 @@
 <?php
 class Database {
-    private $servername = "localhost";
-    private $username = "root";
-    private $password = "";
-    private $dbname = "nirvana";
+    private $servername = "31.11.39.179";
+    private $username = "Sql1819808";
+    private $password = "Safinirvana@2024";
+    private $dbname = "Sql1819808_1";
     public $conn;
     private $secretKey;
     
@@ -259,7 +259,7 @@ class Database {
 
         if(empty($id_carrello))
         {
-            $sql = "INSERT INTO carrello ( id_utente) VALUES ('$id_utente')";
+            $sql = "INSERT INTO carrello ( id_utente, contoTotale, flag_eliminato, flag_rifiutato) VALUES ('$id_utente',0, 0, 0)";         
 
             if ($this->conn->query($sql) === TRUE) {
                 return $id_carrello=get_db_value("SELECT id_carrello FROM carrello WHERE id_utente= '$id_utente' AND flag_ordinato IS NULL");
@@ -286,7 +286,6 @@ class Database {
     public function ordina($nome, $cognome, $indirizzo, $telefono, $email, $orarioConsegna, $note, $deliveryType, $paymentType) {
         $id_carrello = $this->esisteCarrello();
         $data_odierna = date('Y-m-d');
-
         if ($id_carrello) {
             // Recupera i prodotti nel carrello
             $ordine = get_data("SELECT id_prodottiCarrello, numero_prodotti, prezzo, id_prodotto FROM prodotticarrello WHERE id_carrello='$id_carrello'");
@@ -313,7 +312,7 @@ class Database {
             
             // Converti il tipo di consegna in un valore numerico per il database (1 = Delivery, 2 = Asporto)
             $tipologia = ($deliveryType === 'Delivery') ? 1 : 2;
-    
+
             // Inserisci i dettagli dell'ordine nella tabella `carrello_dettaglio`
             if ($this->inserisciDettagliOrdine($id_carrello, $tipologia, $orarioConsegna, $note, $paymentType)) {
                 // Salva le informazioni dell'utente
@@ -324,12 +323,16 @@ class Database {
                         data_ordinazione = '$data_odierna'
                     WHERE id_carrello = '$id_carrello'";
             
+            
+                    
+
                     
                     $update_success = $this->conn->query($sql) === TRUE;
     
                     // Invia email con i dettagli dell'ordine
                     $invioMail = $this->inviaEmailOrdine($nome, $cognome, $indirizzo, $telefono, $email, $orarioConsegna, $note, $deliveryType, $prodotti_ordinati, $totale);
                     
+
                     if ($invioMail) {
                         return [
                             'success' => $update_success,
@@ -858,7 +861,7 @@ class Database {
             
             // Mittente e destinatario
             $mail->setFrom('mittente@email.com', 'Sistema Ordini');
-            $mail->addAddress($email);  
+            $mail->addAddress("waleed.khalid@studenti.unicam.it");  
             // Oggetto dell'email
             $mail->Subject = 'Nuovo Ordine Ricevuto da ' . $nome . ' ' . $cognome;
         
@@ -912,6 +915,7 @@ class Database {
             echo "Errore: " . $mail->ErrorInfo;
         }
     }
+
 
     private function inviaEmailConferma($nome, $cognome, $indirizzo, $telefono, $email, $orarioConsegna, $note, $deliveryType, $prodotti_ordinati, $totale) {
         require 'PHPMailer/src/Exception.php';

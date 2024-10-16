@@ -235,11 +235,11 @@ $id_utente = $_SESSION['id_utente'];
 </div>
 
 <div class="category-container text-center mb-5">
-    <button class="btn btn-primary category-btn" data-category="Hamburger">Hamburger</button>
     <button class="btn btn-primary category-btn" data-category="Pizze Rosse">Pizze Rosse</button>
     <button class="btn btn-primary category-btn" data-category="Pizze Bianche">Pizze Bianche</button>
     <button class="btn btn-primary category-btn" data-category="Pizze speciali">Pizze speciali</button>
     <button class="btn btn-primary category-btn" data-category="panini">Calzoni/Panini</button>
+    <button class="btn btn-primary category-btn" data-category="Hamburger">Hamburger</button>
     <button class="btn btn-primary category-btn" data-category="Fritti">Fritti</button>
     <button class="btn btn-primary category-btn" data-category="piatti unici">Piatti unici</button>
     <button class="btn btn-primary category-btn" data-category="dolci">Dolci</button>
@@ -253,6 +253,9 @@ $id_utente = $_SESSION['id_utente'];
         <div class="row no-gutters d-flex">
             <?php
             $categoriaFiltrata = isset($_GET['categoria']) ? $_GET['categoria'] : '';
+            if(empty($categoriaFiltrata)){
+                $categoriaFiltrata='Pizze Rosse';
+            }
 
             foreach ($aPRODOTTI as $row) {
                 $immagine=$row['immagine'];
@@ -276,7 +279,13 @@ $id_utente = $_SESSION['id_utente'];
         </div>
     </div>
 </div>
-      
+
+<div class="text-center mt-5 mb-5">
+<div class="text-center" style="position: fixed; bottom: 20px; left: 20px; z-index: 1000;">
+    <a href="images/menuNirvana.pdf" target="_blank">
+        <button class="btn btn-primary">Menu con allergenici</button>
+    </a>
+</div>
 
 </section>
 
@@ -403,7 +412,7 @@ $id_utente = $_SESSION['id_utente'];
   </footer>
 
     
-  
+  <button onclick="hello()" class="btn btn-primary">hiii</button>
 
   <!-- loader -->
   <div id="ftco-loader" class="show fullscreen"><svg class="circular" width="48px" height="48px"><circle class="path-bg" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke="#eeeeee"/><circle class="path" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke-miterlimit="10" stroke="#F96D00"/></svg></div>

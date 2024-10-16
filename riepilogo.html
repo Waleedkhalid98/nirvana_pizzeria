@@ -211,6 +211,9 @@ box-sizing: border-box;
         <div class="spinner-border text-primary" role="status">
             <span class="sr-only">Loading...</span>
         </div>
+        <div class="text-center">
+            <p>Attendere...</p>
+        </div>
     </div>
     <nav class="navbar navbar-expand-lg navbar-dark ftco_navbar bg-dark ftco-navbar-light" id="ftco-navbar">
 	    <div class="container">
@@ -313,7 +316,7 @@ box-sizing: border-box;
                 <div class="btn-group-toggle" data-toggle="buttons">
                     <label class="btn btn-outline-primary paymentOption" id="cardButton">
                         <input type="radio" name="paymentType" value="Elettronico" required autocomplete="off">
-                        <span class="fas fa-money-check-alt"></span> Pagamento Elettronico con POS
+                        <span class="fas fa-money-check-alt"></span> Pagamento con POS
                     </label>
                     <label class="btn btn-outline-primary paymentOption" id="cashButton">
                         <input type="radio" name="paymentType" value="Contante" required autocomplete="off">
@@ -332,20 +335,22 @@ box-sizing: border-box;
                             <h4>Riepilogo Ordine</h4>
                         </div>
                         <div class="card-body">
-                            <table class="table table-striped" id="riepilogoOrdineTable">
-                                <thead>
-                                    <tr>
-                                        <th>Prodotto</th>
-                                        <th>Quantità</th>
-                                        <th>Subtotale</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="ordineTableBody">
-                                    <tr>
-                                        <td colspan="3" id="ordineVuoto">Caricamento dei dettagli dell'ordine...</td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                            <div class="table-responsive">
+                                <table class="table table-striped" id="riepilogoOrdineTable">
+                                    <thead>
+                                        <tr>
+                                            <th>Prodotto</th>
+                                            <th>Quantità</th>
+                                            <th>Subtotale</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="ordineTableBody">
+                                        <tr>
+                                            <td colspan="3" id="ordineVuoto">Caricamento dei dettagli dell'ordine...</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
                             <p><strong>Totale:</strong> <span id="riepilogoTotale">€0.00</span></p>
                         </div>
                     </div>
@@ -356,34 +361,36 @@ box-sizing: border-box;
                             <h4>Riepilogo Informazioni</h4>
                         </div>
                         <div class="card-body">
-                            <table class="table table-striped">
-                                <tbody id="riepilogoInfoTable">
-                                    <tr>
-                                        <th>Modalità di consegna</th>
-                                        <td id="summaryDelivery"></td>
-                                    </tr>
-                                    <tr>
-                                        <th>Nome e Cognome</th>
-                                        <td id="summaryName"></td>
-                                    </tr>
-                                    <tr>
-                                        <th>Indirizzo</th>
-                                        <td id="summaryAddress"></td>
-                                    </tr>
-                                    <tr>
-                                        <th>Numero di telefono</th>
-                                        <td id="summaryPhone"></td>
-                                    </tr>
-                                    <tr>
-                                        <th>Email</th>
-                                        <td id="summaryEmail"></td>
-                                    </tr>
-                                    <tr>
-                                        <th>Orario</th>
-                                        <td id="summaryTime"></td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                            <div class="table-responsive">
+                                <table class="table table-striped">
+                                    <tbody id="riepilogoInfoTable">
+                                        <tr>
+                                            <th>Modalità di consegna</th>
+                                            <td id="summaryDelivery"></td>
+                                        </tr>
+                                        <tr>
+                                            <th>Nome e Cognome</th>
+                                            <td id="summaryName"></td>
+                                        </tr>
+                                        <tr>
+                                            <th>Indirizzo</th>
+                                            <td id="summaryAddress"></td>
+                                        </tr>
+                                        <tr>
+                                            <th>Numero di telefono</th>
+                                            <td id="summaryPhone"></td>
+                                        </tr>
+                                        <tr>
+                                            <th>Email</th>
+                                            <td id="summaryEmail"></td>
+                                        </tr>
+                                        <tr>
+                                            <th>Orario</th>
+                                            <td id="summaryTime"></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
 
@@ -488,10 +495,12 @@ $(document).ready(function() {
 
         function showStep(n) {
             const steps = document.getElementsByClassName("step");
-            steps[n].classList.add("active");
-
-            document.getElementById("prevBtn").style.display = n == 0 ? "none" : "inline-block";
-            document.getElementById("nextBtn").innerHTML = n == (steps.length - 1) ? "Conferma Ordine" : "Avanti";
+        steps[n].classList.add("active");
+        
+        const isLastStep = n == (steps.length - 1);
+        
+        $("#prevBtn").toggle(n != 0 && !isLastStep);
+        $("#nextBtn").text(isLastStep ? "Conferma Ordine" : "Avanti");
         }
 
         function nextPrev(n) {
@@ -506,14 +515,13 @@ $(document).ready(function() {
             currentStep += n;
 
             // Se siamo all'ultimo step, chiama la funzione riepilogo
-            if (currentStep >= steps.length - 1) {
+            if (currentStep >= steps.length - 1) {  
                 updateSummary(); // Aggiorna il riepilogo con i dati inseriti
                 currentStep = steps.length - 1; // Assicurati di restare nell'ultimo step
 
                 // Chiama la funzione riepilogo per ottenere i dati dell'ordine
                 riepilogo();
 
-                
                 // Chiama la funzione ordina per confermare l'ordine quando l'utente clicca su "Conferma Ordine"
                 document.getElementById("nextBtn").addEventListener("click", function() {
                     ordina(); // Invia l'ordine quando si conferma
@@ -521,10 +529,13 @@ $(document).ready(function() {
 
 
                 showStep(currentStep);
+                window.scrollTo(0, 0);
                 return;
             }
 
             showStep(currentStep);
+             // Scorri all'inizio della pagina
+            window.scrollTo(0, 0);
         }
         function validateStep() {
     const steps = document.getElementsByClassName("step");
@@ -639,6 +650,7 @@ document.querySelectorAll('.btn-group-toggle label').forEach(label => {
                 paymentType: paymentType
             },
             success: function(result) {
+                console.log(result)
                 if (result.status === 1) {
                     // Mostra il loader
                     $("#loader").hide();

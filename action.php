@@ -5,7 +5,18 @@ include 'librerie/metodi.php';
 error_reporting(E_ALL);
 ini_set('display_errors', 0);
 ini_set('log_errors', 1);
-ini_set('error_log', '/path/to/error.log');  
+ini_set('error_log', '/path/to/error.log'); 
+
+header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
+header("Access-Control-Allow-Headers: Content-Type, Authorization");
+
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    // Restituisci uno stato 200 OK per la richiesta preflight
+    http_response_code(200);
+    exit;
+}
+
 $db = new Database();
 
 function sendJsonResponse($data) {
@@ -32,8 +43,6 @@ switch($paction)
 
     case "aggiungiProdotto": 
         $idProdotto=get_param("_k");
-        
-        
         if ($db->insertProdottoCarrello($idProdotto)) {
             echo 1;
         } else {
@@ -85,7 +94,6 @@ switch($paction)
     break;  
     
     case "ordina":
-        try {
             $nome = get_param("nome");
             $cognome = get_param("cognome");
             $indirizzo = get_param("indirizzo");
@@ -96,6 +104,7 @@ switch($paction)
             $deliveryType = get_param("deliveryType");
             $paymentType = get_param("paymentType");
             $risultato_ordine = $db->ordina($nome, $cognome, $indirizzo, $telefono, $email, $orarioConsegna, $note, $deliveryType, $paymentType);
+           
             if ($risultato_ordine['success']) {
                 sendJsonResponse([
                     'status' => 1,
@@ -112,13 +121,7 @@ switch($paction)
                     'message' => 'Errore durante l\'elaborazione dell\'ordine'
                 ]);
             }
-        } catch (Exception $e) {
-            error_log("Errore nell'ordine: " . $e->getMessage());
-            sendJsonResponse([
-                'status' => 0,
-                'message' => 'Si è verificato un errore inaspettato'
-            ]);
-        }
+   
     break;
 
 
