@@ -128,7 +128,7 @@ $db = new Database();
                   <a class="nav-link" href="Comunicazioni.html">Comunicazioni</a>
               </li>
                 <li class="nav-item">
-                    <a class="nav-link " aria-disabled="true">Configurazioni</a>
+                <a class="nav-link active " href="configurazioni.php">Configurazioni</a>
                 </li>
             </ul>
         </div>
@@ -451,6 +451,7 @@ $db = new Database();
         numeroConfermare();
         elencoOrdini(); // Richiama la funzione per riempire gli ordini
         elencoOrdiniConfermati();
+        verificaToken();
         $("#btnradio1").change(function() {
             $("#tabellaNonConfermati").removeClass("d-none");
             $("#tabellaConfermati").addClass("d-none");
@@ -464,10 +465,28 @@ $db = new Database();
 
 
     function getTokenFromLocalStorage() {
-        return localStorage.getItem('userToken');
+        const token = sessionStorage.getItem('token'); // Ottieni il token da localStorage
+
+        if (token) {
+            console.log("trovato token");
+        } else {
+            console.error("Token non trovato in localStorage.");
+        }
+
+        return token;
     }
 
-    function verificaToken(token) {
+
+function verificaToken() {
+    const token = getTokenFromLocalStorage(); // Recupera il token
+
+    if (!token) {
+        // Se non c'è il token, blocca l'accesso e mostra il messaggio di errore
+        alert("Accesso negato. Devi autenticarti per accedere a questa pagina.");
+        window.location.href = 'login.php'; // Redirect alla pagina di login (modifica il percorso se necessario)
+        return; // Blocca l'esecuzione della funzione
+    }
+
     console.log("Token inviato:", token);  // Log del token per verificare cosa stai inviando
 
     $.ajax({
@@ -478,9 +497,12 @@ $db = new Database();
         success: function (result) {
             console.log("Risultato ricevuto:", result);  // Log del risultato per debug
             if (result.status === 1) {
-               alert(result.message);  // Se il JSON ha un campo 'message'
+                console.log("Utente autenticato.");
+                // Se autenticato, non fare nulla o procedi con il caricamento dei dati
             } else {
-                alert("Errore durante il caricamento degli ordini.");
+                // Se non autenticato, blocca l'accesso
+                alert("Autenticazione fallita. Sarai reindirizzato alla pagina di login.");
+                window.location.href = 'login.html'; // Redirect alla pagina di login
             }
         },
         error: function (xhr, status, error) {

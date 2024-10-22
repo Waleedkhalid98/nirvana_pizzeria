@@ -1,9 +1,9 @@
 <?php
 class Database {
-    private $servername = "31.11.39.179";
-    private $username = "Sql1819808";
-    private $password = "Safinirvana@2024";
-    private $dbname = "Sql1819808_1";
+    private $servername = "localhost";
+    private $username = "root";
+    private $password = "";
+    private $dbname = "nirvana";
     public $conn;
     private $secretKey;
     
@@ -105,11 +105,11 @@ class Database {
                 $this->saveToken($user['id_utente'], $token);
                 return $token;
             }else{
-                echo "la pass non è uguale";
+               
             }
         }
         else{
-            echo "NON TROVO";
+           
         }
         return false;
     }
@@ -142,20 +142,33 @@ class Database {
         $this->conn->query($sql);
     }
 
-
     public function verifyToken($token) {
+        // Prevenzione SQL injection
         $token = $this->conn->real_escape_string($token);
-
+    
+        // Query per verificare il token con la scadenza
         $sql = "SELECT id_utente FROM utenti_tokens WHERE token = '$token' AND scadenza > NOW()";
         $result = $this->conn->query($sql);
-
+    
+        // Se viene trovato un risultato
         if ($result->num_rows == 1) {
+            // Decodifica il payload del token
             $tokenParts = explode('.', $token);
             $payload = json_decode(base64_decode($tokenParts[1]), true);
-            return $payload['user_id'];
+    
+            // Verifica che il payload contenga l'user_id
+            if (isset($payload['user_id'])) {
+                return [
+                    'success' => true,
+                    'id_utente' => $payload['user_id']
+                ];
+            }
         }
-        return false;
+    
+        // Se il token non è valido o non è trovato
+        return ['success' => false];
     }
+    
 
     public function logout($token) {
         $token = $this->conn->real_escape_string($token);
@@ -178,7 +191,6 @@ class Database {
             return false;
         }
     }
-
     public function recuperaProdottiCarrello() {
         $id_carrello = $this->controlloCarrello(); 
 
@@ -191,10 +203,12 @@ class Database {
 
         if ($result->num_rows > 0) {
             $prodotti = [];
+            $totale = 0;
             while($row = $result->fetch_assoc()) {
+                $totale += $row['numero_prodotti'] * $row['prezzo'];
                 $prodotti[] = $row;
             }
-            return $prodotti;
+            return ['prodotti' => $prodotti, 'totale' => $totale];
         } else {
             return "false";
         }
@@ -271,7 +285,7 @@ class Database {
     }
 
     
-    private function esisteCarrello() {
+    public function esisteCarrello() {
         session_start();    
 
         $id_utente = $_SESSION['id_utente'];
@@ -503,7 +517,7 @@ class Database {
         if (is_array($prodotti)) {
             foreach ($prodotti as $item) {
                 if (is_array($item)) {
-                    $nomeProdotto = get_db_value("SELECT descrizione FROM prodotto WHERE id='" . $item['id_prodotto'] . "'");
+                    $nomeProdotto = get_db_value("SELECT titolo FROM prodotto WHERE id='" . $item['id_prodotto'] . "'");
                     $prodotti_list[] = [
                         'prezzo' => $item['prezzo'],
                         'quantita' => $item['numero_prodotti'],
@@ -537,6 +551,37 @@ class Database {
                     'orario_consegna' => substr($item['orario_consegna'], 0, 5),
                     'prodotti' => $prodotti_list
                     // Aggiungi altri campi se necessario
+                ]
+            ];
+        } else {
+            return [
+                'success' => false,
+                'message' => 'Ordine non trovato.'
+            ];
+        }
+    }
+
+
+    public function visualizzaDettagliProdotto($id) {
+
+        $prodotto = get_data("SELECT *  FROM prodotto WHERE id='$id'");
+
+
+        // Controlla se l'ordine esiste
+        if (!empty($prodotto) && is_array($prodotto[0])) {
+            $item = $prodotto[0]; // Prendi il primo (e unico) elemento
+
+
+    
+            return [
+                'success' => true,
+                'data' => [
+                    'id' => $item['id'],
+                    'titolo' => $item['titolo'],
+                    'descrizione' => $item['descrizione'],
+                    'prezzo' => $item['prezzo'],
+                    'categoria' => $item['categoria'],
+                    'immagine' => $item['immagine'],
                 ]
             ];
         } else {
@@ -842,6 +887,26 @@ class Database {
             'numero' => $ordini
         ];
     }
+
+
+    public function numeroProdotti() {
+
+        $id_carrello = $this->esisteCarrello();
+        // Ottieni gli ordini e il totale del prezzo direttamente in un'unica query
+        $numeroProdotti = get_db_value("
+      select COUNT( prodotticarrello.id_prodottiCarrello) 
+      from prodotticarrello 
+      inner join carrello on prodotticarrello.id_carrello= carrello.id_carrello where carrello.id_carrello='$id_carrello'"
+       
+     );
+        
+        return [
+            'success' => TRUE,
+            'numeroProdotti' => $numeroProdotti
+        ];
+    }
+
+
     
     private function inviaEmailOrdine($nome, $cognome, $indirizzo, $telefono, $email, $orarioConsegna, $note, $deliveryType, $prodotti_ordinati, $totale) {
         require 'PHPMailer/src/Exception.php';
@@ -939,7 +1004,7 @@ class Database {
             $mail->addAddress($email);  
             
             // Oggetto dell'email
-            $mail->Subject = 'Nuovo Ordine Ricevuto da ' . $nome . ' ' . $cognome;
+            $mail->Subject = 'Conferma ordine';
         
             // Corpo dell'email
             $body = "<h1>Conferma Ordine Nirvana</h1>";
@@ -1050,6 +1115,33 @@ class Database {
         
         return $this->conn->query($sqlUtente) === TRUE;
     }
+    public function salvaProdotto($idProdotto,$titolo, $descrizione, $prezzo, $nomeImmagine, $categoria) {
+        $titolo = $this->conn->real_escape_string($titolo);
+        $descrizione = $this->conn->real_escape_string($descrizione);
+        $prezzo = floatval($prezzo); // Assicurati che sia un numero
+        $nomeImmagine = $this->conn->real_escape_string($nomeImmagine);
+        $categoria = $this->conn->real_escape_string($categoria);
+        // Prepara la query per l'update
+        $sql = "UPDATE prodotto 
+                SET titolo = '$titolo', descrizione = '$descrizione', prezzo = $prezzo, immagine = '$nomeImmagine', categoria = '$categoria' 
+                WHERE id = '$idProdotto'";
+        
+        // Esegui la query
+        if ($this->conn->query($sql) === TRUE) {
+            return [
+                'success' => true,
+                'message' => 'Prodotto aggiornato con successo.'
+            ];
+        } else {
+            return [
+                'success' => false,
+                'error' => $this->conn->error // Restituisci l'errore in caso di fallimento
+            ];
+        }
+    }
+    
+    
+
     
     
 }

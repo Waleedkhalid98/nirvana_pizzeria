@@ -10,20 +10,11 @@ $log = get_param("login");
 $nome = get_param("nome");
 $pass = get_param("pass");
 
-if ($log) {
-    $login_success = $db->login($nome, $pass);
 
-    // Se il login ha successo (assumendo che la funzione ritorni true o 1 per il successo)
-    if ($login_success) {
-        // Reindirizza a una nuova pagina
-        header('Location: ordini.php');
-        exit();  // Interrompe l'esecuzione dello script dopo il reindirizzamento
-    } else {
-        // In caso di fallimento del login, mostri un messaggio di errore
-        echo "Login fallito. Riprova.";
-    }
+$login_success = $db->login($nome, $pass);
+
      
-}
+
 ?>
 
 <!DOCTYPE html>
@@ -86,10 +77,23 @@ if ($log) {
             </div>
         </div>
     </div>
-
-    <!-- Bootstrap Bundle JS e jQuery -->
+    <input type="hidden" id="token" name="token" value="<?php echo $login_success; ?>">    <!-- Bootstrap Bundle JS e jQuery -->
     <script src="bootstrap-5.3.3/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </body>
 </html>
+
+
+
+<script>
+    const token = document.getElementById('token').value;
+
+    if (token) {
+        sessionStorage.setItem('token', token); // Salva il token nel sessionStorage
+
+        window.location.href = 'ordini.php';  // Modifica il percorso a seconda della pagina a cui vuoi fare il redirect
+    } else {
+        console.log("Login fallito o token mancante.");
+    }
+</script>
 

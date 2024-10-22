@@ -52,14 +52,19 @@ switch($paction)
     break;
 
     case "FillCarrello":
-        $prodotti = $db->recuperaProdottiCarrello();
-        if (!empty($prodotti)) {
-            echo json_encode($prodotti); // Restituisce i prodotti come JSON
+        $risultato = $db->recuperaProdottiCarrello();
+        if ($risultato !== "false") {
+            echo json_encode([
+                'prodotti' => $risultato['prodotti'],
+                'totale' => $risultato['totale']
+            ]);
         } else {
-            echo json_encode([]); // Restituisce un array vuoto se non ci sono prodotti
+            echo json_encode([
+                'prodotti' => [],
+                'totale' => 0
+            ]);
         }
         break;
-    
     
 
     case "eliminaProdotto":
@@ -237,6 +242,33 @@ switch($paction)
         }
     break;
 
+    case "visualizzaDettagliProdotto":
+        try {
+            $id = get_param("id");
+            $prodotto = $db->visualizzaDettagliProdotto($id);
+            
+            if ($prodotto['success']) {
+                sendJsonResponse([
+                    'status' => 1,
+                    'message' => 'Dettagli dell\'ordine recuperati con successo',
+                    'data' => [
+                        'dettaglio' => $prodotto['data'] // Cambiato da 'dettaglio' a 'data'
+                    ]
+                ]);
+            } else {
+                sendJsonResponse([
+                    'status' => 0,
+                    'message' => $prodotto['message'] // Utilizza il messaggio di errore specifico
+                ]);
+            }
+        } catch (Exception $e) {
+            error_log("Errore nell'ordine: " . $e->getMessage());
+            sendJsonResponse([
+                'status' => 0,
+                'message' => 'Si è verificato un errore inaspettato'
+            ]);
+        }
+    break;
 
     case "visualizzaDettagliUtente":
         try {
@@ -402,6 +434,32 @@ switch($paction)
         }
     break;
 
+    case "numeroProdotti":
+        try {
+            $risultatoNumeroProdotti = $db->numeroProdotti();
+            if ($risultatoNumeroProdotti['success']) {
+                sendJsonResponse([
+                    'status' => 1,
+                    'message' => 'numeroProdotti',
+                    'data' => [
+                        'numeroProdotti' => $risultatoNumeroProdotti['numeroProdotti']
+                    ]
+                ]);
+            } else {
+                sendJsonResponse([
+                    'status' => 0,
+                    'message' => 'Errore durante l\'elaborazione dell\'ordine'
+                ]);
+            }
+        } catch (Exception $e) {
+            error_log("Errore nell'ordine: " . $e->getMessage());
+            sendJsonResponse([
+                'status' => 0,
+                'message' => 'Si è verificato un errore inaspettato'
+            ]);
+        }
+    break;
+
     case "numeroConfermare":
         try {
             $numeroConfermare = $db->numeroConfermare();
@@ -431,11 +489,17 @@ switch($paction)
 
     case "verifica":
         try {
+            // Recupera il token dai parametri
             $token = get_param("token");
-            echo $token;
+    
+            // Stampa il token per il debug (puoi rimuovere questa parte)
+    
+            // Verifica il token utilizzando la funzione verifyToken
             $id_utente = $db->verifyToken($token);
-            echo $id_utente;
+    
+            // Controlla se la verifica è andata a buon fine
             if ($id_utente['success']) {
+                // Risposta JSON con successo
                 sendJsonResponse([
                     'status' => 1,
                     'message' => 'elencoUtenti',
@@ -444,19 +508,83 @@ switch($paction)
                     ]
                 ]);
             } else {
+                // Risposta JSON in caso di errore di verifica
                 sendJsonResponse([
                     'status' => 0,
-                    'message' => 'Errore durante l\'elaborazione dell\'ordine'
+                    'message' => 'Errore durante l\'elaborazione dell\'ordine: Token non valido o scaduto'
                 ]);
             }
         } catch (Exception $e) {
+            // Logga l'errore nel file di log e restituisci un messaggio di errore
             error_log("Errore nell'ordine: " . $e->getMessage());
+    
             sendJsonResponse([
                 'status' => 0,
                 'message' => 'Si è verificato un errore inaspettato'
             ]);
         }
-    break;
+        break;
+
+        case "caricaImmagine":
+            if (isset($_POST['immagine']) && isset($_POST['nomeFile'])) {
+                // Decodifica la stringa base64
+                $data = $_POST['immagine'];
+        
+                // Trova la parte base64 dell'immagine
+                list($type, $data) = explode(';', $data);
+                list(, $data)      = explode(',', $data);
+                $data = base64_decode($data);
+                
+                // Verifica se la decodifica ha avuto successo
+                if ($data === false) {
+                    echo json_encode(['status' => 0, 'message' => 'Immagine non valida.']);
+                    exit;
+                }
+        
+                // Definisci il percorso dove salvare l'immagine
+                $uploadDir = 'images/'; // Sostituisci con il tuo percorso
+                $fileName = $_POST['nomeFile'];
+                $filePath = $uploadDir . basename($fileName);
+        
+                // Salva il file
+                if (file_put_contents($filePath, $data)) {
+                    echo json_encode(['status' => 1, 'nomeImmagine' => $fileName]);
+                } else {
+                    echo json_encode(['status' => 0, 'message' => 'Errore nel salvataggio dell\'immagine.']);
+                }
+            } else {
+                echo json_encode(['status' => 0, 'message' => 'Dati mancanti.']);
+            }
+            break;
+
+            case "salvaDatiProdotto":
+                $idprodotto = get_param("id");
+                $titolo = get_param("titolo");
+                $descrizione = get_param("descrizione");
+                $prezzo = get_param("prezzo");
+                $categoria = get_param("categoria");
+                $nomeImmagine = get_param("immagine"); // Aggiunto per l'immagine
+                // Presumendo che la tua funzione di salvataggio richieda questi parametri
+                $risultato_salvataggio = $db->salvaProdotto( $idprodotto,$titolo, $descrizione, $prezzo, $nomeImmagine, $categoria);
+                if ($risultato_salvataggio['success']) {
+                    sendJsonResponse([
+                        'status' => 1,
+                        'message' => 'Prodotto salvato con successo',
+                        'data' => [
+                            'id_prodotto' => $risultato_salvataggio['id_prodotto'],
+                            // Aggiungi ulteriori dati se necessario
+                        ]
+                    ]);
+                } else {
+                    sendJsonResponse([
+                        'status' => 0,
+                        'message' => 'Errore durante il salvataggio del prodotto'
+                    ]);
+                }
+            
+       
+        break;
+    
     
     
 }   

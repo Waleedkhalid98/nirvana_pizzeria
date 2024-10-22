@@ -17,6 +17,14 @@ if (!isset($_SESSION['id_utente'])) {
 //prendo id_utente
 $id_utente = $_SESSION['id_utente'];
 
+$id_carrello=get_db_value("SELECT id_carrello FROM carrello WHERE id_utente= '$id_utente' AND flag_ordinato IS NULL");
+
+$numeroProdotti = get_db_value("
+    select COUNT( prodotticarrello.id_prodottiCarrello) 
+    from prodotticarrello 
+    inner join carrello on prodotticarrello.id_carrello= carrello.id_carrello where carrello.id_carrello='$id_carrello'"
+
+);
 
 
 
@@ -290,9 +298,15 @@ $id_utente = $_SESSION['id_utente'];
 </section>
 
 <!-- Bottone per aprire il carrello -->
+<div>
 <button id="btnCarrello" class="btn btn-primary btn-lg shadow-lg">
-    <i class="fas fa-shopping-cart">Carrello</i>
-</button>
+<i class="fas fa-shopping-cart"></i>
+        Carrello
+        <span id="cartBadge" class="position-absolute top-0 start-0 translate-middle badge rounded-circle bg-danger d-flex align-items-center justify-content-center" style="width: 22px; height: 22px; left: -12px;" >
+        <?php echo $numeroProdotti; ?>
+        </span>
+    </button>
+</div>
 
 <!-- Sidebar carrello che scorre da destra -->
 <div id="carrello" class="bg-dark text-light shadow-lg" >
@@ -364,7 +378,7 @@ $id_utente = $_SESSION['id_utente'];
                   <div class="ftco-footer-widget mb-4 ml-md-4">
                       <h2 class="ftco-heading-2">Pagine</h2>
                       <ul class="list-unstyled">
-                        <li><a href="home.html" class="py-2 d-block">Home</a></li>
+                        <li><a href="index.html" class="py-2 d-block">Home</a></li>
                         <li><a href="menu.php" class="py-2 d-block">Menu</a></li>
                         <li><a href="blog.html" class="py-2 d-block">Blog</a></li>
                         <li><a href="contatti.html" class="py-2 d-block">Contatti</a></li>
@@ -372,33 +386,6 @@ $id_utente = $_SESSION['id_utente'];
                   </div>
               </div>
   
-              <div class="col-lg-4 col-md-6 mb-5">
-                  <div class="ftco-footer-widget mb-4">
-                      <h2 class="ftco-heading-2">Recent Blog</h2>
-                      <div class="block-21 mb-4 d-flex">
-                          <a class="blog-img mr-4" style="background-image: url(images/image_1.jpg);"></a>
-                          <div class="text">
-                              <h3 class="heading"><a href="#">Even the all-powerful Pointing has no control about</a></h3>
-                              <div class="meta">
-                                  <div><span class="icon-calendar"></span> Sept 15, 2018</div>
-                                  <div><span class="icon-person"></span> Admin</div>
-                                  <div><span class="icon-chat"></span> 19</div>
-                              </div>
-                          </div>
-                      </div>
-                      <div class="block-21 mb-4 d-flex">
-                          <a class="blog-img mr-4" style="background-image: url(images/image_2.jpg);"></a>
-                          <div class="text">
-                              <h3 class="heading"><a href="#">Even the all-powerful Pointing has no control about</a></h3>
-                              <div class="meta">
-                                  <div><span class="icon-calendar"></span> Sept 15, 2018</div>
-                                  <div><span class="icon-person"></span> Admin</div>
-                                  <div><span class="icon-chat"></span> 19</div>
-                              </div>
-                          </div>
-                      </div>
-                  </div>
-              </div>
   
           </div>
           <div class="row">
@@ -412,7 +399,6 @@ $id_utente = $_SESSION['id_utente'];
   </footer>
 
     
-  <button onclick="hello()" class="btn btn-primary">hiii</button>
 
   <!-- loader -->
   <div id="ftco-loader" class="show fullscreen"><svg class="circular" width="48px" height="48px"><circle class="path-bg" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke="#eeeeee"/><circle class="path" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke-miterlimit="10" stroke="#F96D00"/></svg></div>
@@ -498,7 +484,7 @@ $id_utente = $_SESSION['id_utente'];
                     }, 1000);
 
                     riempiCarrello();
-
+                    numeroProdotti()
                   
                 }else{
                     alert("Errore durante l'aggiunta del prodotto.");
@@ -532,12 +518,15 @@ $id_utente = $_SESSION['id_utente'];
         });
     }
 
-function riempiCarrello() {
+    function riempiCarrello() {
     $.ajax({
         type: "POST",
         url: 'action.php?_action=FillCarrello',
         dataType: 'json',
-        success: function (prodotti) {
+        success: function (data) {
+            const prodotti = data.prodotti;
+            const totale = data.totale;
+            
             if (prodotti && prodotti !== false && Array.isArray(prodotti) && prodotti.length > 0) {
                 let tableHTML = "";
                 prodotti.forEach(function(prodotto) {
@@ -545,40 +534,71 @@ function riempiCarrello() {
                     tableHTML += "<td>" + prodotto.titolo + "</td>";
                     tableHTML += "<td>" + prodotto.prezzo + "€</td>";
                     tableHTML += "<td class='d-flex justify-content-between align-items-center'>";
-
+                    
                     // Bottone per diminuire quantità
                     tableHTML += "<div class='input-group'>";
                     tableHTML += "<button style='border: none; box-shadow: none;' class='btn btn-outline-secondary btn-sm' type='button' onclick='diminuisciQuantita(" + prodotto.id_prodottiCarrello + ")'>";
                     tableHTML += "<i class='fas fa-minus-circle'></i>";
                     tableHTML += "</button>";
-
+                    
                     // Input quantità
                     tableHTML += "<input type='text' class='form-control form-control-sm text-center' id='quantity_" + prodotto.id_prodottiCarrello + "' value='"+prodotto.numero_prodotti+"' min='1' max='100' readonly>";
-
+                    
                     // Bottone per incrementare quantità
                     tableHTML += "<button style='border: none; box-shadow: none;' class='btn btn-outline-secondary btn-sm' type='button' onclick='incrementaQuantita(" + prodotto.id_prodottiCarrello + ")'>";
                     tableHTML += "<i class='fas fa-plus-circle'></i>";
                     tableHTML += "</button>";
                     tableHTML += "</div>";
-
+                    
                     tableHTML += "</td>";
                     // Bottone per eliminare prodotto
                     tableHTML += "<td><button class='btn btn-danger btn-sm delete-btn' data-id='" + prodotto.id_prodottiCarrello + "' onclick='eliminaprodotto(" + prodotto.id_prodottiCarrello +")'>";
-                    tableHTML += "<i class='fas fa-trash-alt'></i> Delete</button></td>";
+                    tableHTML += "<i class='fas fa-trash-alt'></i> Elimina</button></td>";
                     tableHTML += "</tr>";
                 });
-                $('#cartTable tbody').html(tableHTML); // Inserisce i prodotti nella tabella
+                
+                // Aggiungo la riga del totale
+                tableHTML += "<tr class='border-top'>";
+                tableHTML += "<td colspan='4' class='text-end'>";
+                tableHTML += "<strong>Totale: " + totale + "€</strong>";
+                tableHTML += "</td></tr>";
+                
+                $('#cartTable tbody').html(tableHTML);
             } else {
                 $('#cartTable tbody').html("<tr><td colspan='4'>Il carrello è vuoto.</td></tr>");
             }
+            
+           
         },
         error: function () {
             console.log("Errore nel recupero dei prodotti.");
         }
     });
 }
-
-
+ 
+function numeroProdotti() {
+    $.ajax({
+        type: "POST",
+        url: 'action.php?_action=numeroProdotti',
+        dataType: 'json',
+        success: function(numeroProdotti) {
+            // Aggiorna il testo del badge
+            $('#cartBadge').text(numeroProdotti.data.numeroProdotti);
+            
+            // Opzionale: nascondi il badge se non ci sono prodotti
+            if (numeroProdotti === 0) {
+                $('#cartBadge').hide();
+            } else {
+                $('#cartBadge').show();
+            }
+        },
+        error: function() {
+            console.log("Errore nel recupero dei prodotti.");
+            // Opzionale: mostra un messaggio di errore all'utente
+            $('#cartBadge').text('!');
+        }
+    });
+}
     
     function incrementaQuantita(id_prodottiCarrello) {
         $.ajax({
